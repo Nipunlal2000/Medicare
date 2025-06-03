@@ -1,0 +1,19 @@
+/* 
+
+/* Add to your CSS */
+.day-options, .time-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.day-options label, .time-options label {
+    display: inline-block;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}

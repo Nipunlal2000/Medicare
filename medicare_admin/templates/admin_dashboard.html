@@ -1,0 +1,170 @@
+    {% extends 'index.html' %}
+    {% load static %}
+
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    {% endblock %}
+
+    {% block nav %} 
+
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+               <img src="images/logo.png" alt="">
+            </div>
+            <span class="logo_name">Medicare</span>
+        </div>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Appoitments</span>
+                </a></li>
+                <li><a href="{% url 'list_doctor' %}">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Doctors</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Patients</span>
+                </a></li>
+
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="{% url 'logout' %}">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name"> Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            
+            <!--<img src="images/profile.jpg" alt="">-->
+                <h3>Welcome, Admin {{ request.user.name }}</h3>
+
+        </div>
+
+    {% endblock %}
+
+
+
+
+    {% block content %}
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Dashboard</span>
+                </div>
+                <div class="boxes">
+                    <div class="box box1">
+                        <i class="uil uil-user-md"></i>  <!-- You can use a doctor-related icon -->
+                        <span class="text">Total Doctors</span>
+                        <span class="number">{{ doctors|length }}</span>
+                    </div>
+
+                    <div class="box box2">
+                        <i class="uil uil-comments"></i>
+                        <span class="text">Appoitments</span>
+                        <span class="number">20</span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-share"></i>
+                        <span class="text">Patients</span>
+                        <span class="number">10</span>
+                    </div>
+                </div>
+            </div>
+
+<div class="activity">
+    <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center;">
+            <i class="uil uil-clock-three"></i>
+            <span class="text">Doctor List</span>
+        </div>
+        <a href="{% url 'create_doctor' %}" style="
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            margin-right: 100px;
+            background: #007bff;
+            color: white; 
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;">+</a>    
+    </div>
+
+    <div class="activity-data">
+        <!-- Header Row (Labels) -->
+        <div class="data-header">
+            <div class="data image">
+                <span class="data-title">Image</span>
+            </div>
+            <div class="data names">
+                <span class="data-title">Name</span>
+            </div>
+            <div class="data specialization">
+                <span class="data-title">Specialization</span>
+            </div>
+            <div class="data hospital">
+                <span class="data-title">Hospital</span>
+            </div>
+            <div class="data address">
+                <span class="data-title">Address</span>
+            </div>
+        </div>
+
+        <!-- Doctor Data Rows -->
+        {% for doctor in doctors %}
+        <div class="data-row">
+            <div class="data image">
+                <span class="data-list">
+                    {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}" width="40" height="40" style="object-fit: cover; border-radius: 50%;">
+                    {% else %}
+                        No Image
+                    {% endif %}
+                </span>
+            </div>
+            <div class="data names">
+                <span class="data-list">{{ doctor.name }}</span>
+            </div>
+            <div class="data specialization">
+                <span class="data-list">{{ doctor.specialization }}</span>
+            </div>
+            <div class="data hospital">
+                <span class="data-list">{{ doctor.hospital }}</span>
+            </div>
+            <div class="data address">
+                <span class="data-list">{{ doctor.address }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+        </div>
+    </section>
+
+
+
+    <script src="{% static 'js/dashboard.js' %}"></script>
+
+    {% endblock %}

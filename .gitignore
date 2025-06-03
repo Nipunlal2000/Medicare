@@ -1,0 +1,38 @@
+# === Python bytecode and cache ===
+__pycache__/
+*.py[cod]
+*.pyo
+
+# === Virtual environment ===
+medenv/
+env/
+venv/
+.venv/
+
+# === Environment variables ===
+.env
+
+
+# === Static and media files ===
+staticfiles/
+media/
+
+# === VS Code ===
+.vscode/
+
+# === Celery beat schedule ===
+celerybeat-schedule
+celerybeat.pid
+
+# === Log files ===
+*.log
+
+# === Coverage and test cache ===
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# === OS and editor files ===
+.DS_Store
+Thumbs.db

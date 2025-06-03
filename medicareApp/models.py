@@ -35,19 +35,22 @@ class UserProfile(AbstractUser):
     def __str__(self):
         return self.email 
     
-class Doctor(models.Model):
+class Doctors(models.Model):
+    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='doctor', null=True, blank=True)
+    
     name = models.CharField(max_length=100)
     image = models.FileField(upload_to='doctor/', null=True)
     specialization = models.CharField(max_length=100)
     hospital = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
-
+    
     def __str__(self):
         return f"Dr. {self.name} - {self.specialization}"
     
+    
 class Appointment(models.Model):
     patient = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctors, on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
 

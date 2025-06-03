@@ -1,0 +1,113 @@
+
+    {% extends 'index.html' %}
+    {% load static %}
+
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/list.css' %}" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    {% endblock %}
+
+    {% block nav %} 
+
+            <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+               <img src="images/logo.png" alt="">
+            </div>
+            <span class="logo_name">Medicare</span>
+        </div>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Appoitments</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Doctors</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Patients</span>
+                </a></li>
+
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="{% url 'logout' %}">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name"> Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            
+            <!--<img src="images/profile.jpg" alt="">-->
+                <h3>Welcome, Admin {{ request.user.name }}</h3>
+
+        </div>
+
+    {% endblock %}
+
+    {% block content %}
+
+     <div class="container">
+        <div class="header">
+            <h1>Doctors</h1>
+        </div>
+
+        <div class="doctor-list">
+            {% for doctor in doctors %}
+
+
+            <div class="doctor-card">
+                <div class="doctor-image">
+                    {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}" width="40" height="40" style="object-fit: cover; border-radius: 50%;">
+                    {% else %}
+                        No Image
+                    {% endif %}
+                </div>
+                <div class="doctor-info">
+                    <h3>Dr. {{doctor.name}} </h3>
+                    <p class="specialization">Specialist: {{ doctor.specialization }}</p>
+                    <p class="specialization">Hospital: {{ doctor.hospital }}</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="doctor-actions">
+                    <a href="{% url 'detail_doctor' doctor.pk %}" class="btn profile">View Profile</a>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="pagination">
+            <button class="btn prev">Previous</button>
+            <button class="btn next">Next</button>
+        </div>
+
+        <footer class="footer">
+        </footer>
+    </div>
+    {% endblock %}

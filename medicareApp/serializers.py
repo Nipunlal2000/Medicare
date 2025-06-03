@@ -55,7 +55,7 @@ class EmailSerializer(serializers.Serializer):
         
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Doctor
+        model = Doctors
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):

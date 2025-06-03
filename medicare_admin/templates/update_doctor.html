@@ -1,0 +1,71 @@
+    {% extends 'index.html' %}
+    {% load static %}
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/create_doctor.css' %}" />
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+    {% endblock %}
+
+
+
+    {% block content %}
+    <div class="container">
+        {% if edit %}
+        <header>Doctor Update</header>
+        {% else %}
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title">Personal Details</span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Enter doctor name" name="name" value="{{ doctor.name}}" required>
+
+                        </div>
+                        <div class="input-field">
+                            <label>Specialization</label>
+                            <input type="text" placeholder="Enter specialization" name="specialization" value= "{{ doctor.specialization }}" required>
+                        </div>
+                        <div class="input-field" >
+                            <div class="image-preview">
+                                {% if doctor.image %}
+                                    <img src="{{ doctor.image.url }}" id="image-preview" width="50" height="50">
+                                {% else %}
+                                    <img src="" id="image-preview" width="50" height="50" style="display: none;">
+                                {% endif %}
+                            </div>
+                            <div class="input-field">
+                                <label>Image</label>
+                                <input type="file" id="image-upload" placeholder="Upload photo" name="image" accept="image/*" required>
+                            </div>
+                        </div>
+                        <div class="input-field">
+                            <label>Hospital</label>
+                            <input type="text" placeholder="Enter hospital name" name="hospital" value= "{{ doctor.hoital }}" required>
+                        </div>
+
+                        <div class="input-field">
+                            <label>Address</label>
+                            <input type="text" placeholder="Enter address" name="address" value= "{{ doctor.address }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                        <button class="sumbit">
+                            <span class="btnText">Submit</span>
+                            <i class="uil uil-navigator"></i>
+                        </button>
+                    </div>
+                </div> 
+            </div>
+        </form>
+    </div>
+
+
+    <script src="{% static 'js/doctor.js' %}"></script>
+    
+     
+    {% endblock %}

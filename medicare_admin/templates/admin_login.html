@@ -1,0 +1,49 @@
+    {% extends 'index.html' %}
+    {% load static %}
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+    {% endblock %}
+
+
+
+    {% block content %}
+
+    <div class="container">
+      <header>Admin Login</header>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="field email-field">
+          <div class="input-field">
+            <input type="email" placeholder="Enter your email" class="email" name="email" />
+          </div>
+          <span class="error email-error"><i class="bx bx-error-circle error-icon"></i>
+            <p class="error-text">Please enter a valid email</p>
+          </span>
+        </div>
+
+        <div class="field create-password">
+          <div class="input-field">
+            <input type="password" placeholder="Enter your password" class="password" name="password"/>
+            <i class="bx bx-hide show-hide"></i>
+          </div>
+
+          <span class="error password-error"> <i class="bx bx-error-circle error-icon"></i>
+            <p class="error-text">
+              Please enter atleast 8 charatcer with number, symbol, small and capital letter.
+            </p>
+          </span>
+        </div>
+
+        <div class="input-field button">
+          <input type="submit" value="Login" />
+        </div>
+      </form>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+    {% endblock %}

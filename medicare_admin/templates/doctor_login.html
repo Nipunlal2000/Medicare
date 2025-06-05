@@ -11,7 +11,7 @@
     {% block content %}
 
     <div class="container">
-      <header>Admin Login</header>
+      <header>Doctor Login</header>
 
       <form method="POST">
         {% csrf_token %}
@@ -42,7 +42,7 @@
           <input type="submit" value="Login" />
         </div>
       </form>
-      <a href="{% url 'doctor_login' %}" class="align-items:center">Doctor Login</a>
+      <a href="{% url 'login' %}" class="align-items:center">Admin Login</a>
     </div>
 
     <script src="{% static 'js/script.js' %}"></script>

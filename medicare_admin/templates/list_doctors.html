@@ -12,16 +12,16 @@
 
     {% block nav %} 
 
-            <nav>
+    <nav>
         <div class="logo-name">
             <div class="logo-image">
-               <img src="images/logo.png" alt="">
+               <img src="{% static 'images/logo.png' %}" width="70" height="70" style="object-fit: cover; border-radius: 50%;" alt="">
             </div>
             <span class="logo_name">Medicare</span>
         </div>
         <div class="menu-items">
             <ul class="nav-links">
-                <li><a href="{% url 'dashboard' %}">
+                <li><a href="{% url 'doctor_dashboard' %}">
                     <i class="uil uil-estate"></i>
                     <span class="link-name">Dahsboard</span>
                 </a></li>
@@ -31,14 +31,16 @@
                 </a></li>
                 <li><a href="#">
                     <i class="uil uil-chart"></i>
-                    <span class="link-name">Doctors</span>
+                    <span class="link-name">Patients</span>
                 </a></li>
                 <li><a href="#">
                     <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Patients</span>
+                    <span class="link-name">My Profile</span>
                 </a></li>
-
-            </ul>
+                <li><a href="{% url 'doctor_availability' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Availability</span>
+                </a></li>            </ul>
             
             <ul class="logout-mode">
                 <li><a href="{% url 'logout' %}">
@@ -48,6 +50,7 @@
             </ul>
         </div>
     </nav>
+
     <section class="dashboard">
         <div class="top">
             <i class="uil uil-bars sidebar-toggle"></i>
@@ -83,7 +86,7 @@
                     {% endif %}
                 </div>
                 <div class="doctor-info">
-                    <h3>Dr. {{doctor.name}} </h3>
+                    <h3>Dr. {{doctor.user.name}} </h3>
                     <p class="specialization">Specialist: {{ doctor.specialization }}</p>
                     <p class="specialization">Hospital: {{ doctor.hospital }}</p>
                     <div class="rating">

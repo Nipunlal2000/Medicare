@@ -4,200 +4,214 @@
     
     {% block head %}
     <link rel="stylesheet" href="{% static 'css/slot.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
     {% endblock %}
 
+    {% block nav %} 
+
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+               <img src="{% static 'images/logo.png' %}" width="70" height="70" style="object-fit: cover; border-radius: 50%;" alt="">
+            </div>
+            <span class="logo_name">Medicare</span>
+        </div>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{% url 'doctor_dashboard' %}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Appoitments</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Patients</span>
+                </a></li>
+                <li><a href="{% url 'doctor_profile' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">My Profile</span>
+                </a></li>
+                <li><a href="{% url 'doctor_availability' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Availability</span>
+                </a></li>
+
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="{% url 'logout' %}">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name"> Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="dashboard" style="position: absolute;">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+            <!-- <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div> -->
+            
+            <!--<img src="images/profile.jpg" alt="">-->
+                <h3>Welcome, Dr.{{ doctor.user.name }}</h3>
+
+        </div>
+
+    {% endblock %}
+
+
+
 
     {% block content %}
-    <h2>Set Availability for Dr. {{ doctor.name }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        
-        <h4>Available Days:</h4>
-        <div class="day-options">
-            {{ form.monday }} <label for="{{ form.monday.id_for_label }}">Monday</label><br>
-            {{ form.tuesday }} <label for="{{ form.tuesday.id_for_label }}">Tuesday</label><br>
-            {{ form.wednesday }} <label for="{{ form.wednesday.id_for_label }}">wednesday</label><br>
-            {{ form.thursday }} <label for="{{ form.thursday.id_for_label }}">thursday</label><br>
-            {{ form.friday }} <label for="{{ form.friday.id_for_label }}">friday</label><br>
-            {{ form.saturday }} <label for="{{ form.saturday.id_for_label }}">saturday</label><br>
-            {{ form.sunday }} <label for="{{ form.sunday.id_for_label }}">sunday</label><br>
-            <!-- other days -->
-        </div>
-        
-        <h4>Available Time Slots:</h4>
-        <div class="time-options">
-            {{ form.time_9am }} <label for="{{ form.time_9am.id_for_label }}">9:00 AM</label><br>
-            {{ form.time_10am }} <label for="{{ form.time_10am.id_for_label }}">10:00 AM</label><br>
-            {{ form.time_11am }} <label for="{{ form.time_11am.id_for_label }}">11:00 AM</label><br>
-            {{ form.time_12pm }} <label for="{{ form.time_12pm.id_for_label }}">12:00 PM</label><br>
-            {{ form.time_1pm }} <label for="{{ form.time_1pm.id_for_label }}">01:00 PM</label><br>
-            {{ form.time_2pm }} <label for="{{ form.time_2pm.id_for_label }}">02:00 PM</label><br>
-            <!-- other times -->
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Save Availability</button>
-    </form>
+    <div class="container">
 
-    <div class="dashboard">
-        <div class="dash-content">
-            <div class="title">
-                <i class="uil uil-calendar-alt"></i>
-                <span class="text">Set Doctor Availability</span>
+    <h1>Doctor Availability</h1>
+    
+        <form method="post" id="availabilityForm">
+            {% csrf_token %}
+            
+            <!-- Display form errors at the top -->
+            {% if form.errors %}
+            <div class="form-errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label>Date Range</label>
+                <div class="date-range-container">
+                    <div class="date-group">
+                        {{ form.start_date.label_tag }}
+                        {{ form.start_date }}
+                    </div>
+                    <div class="date-group">
+                        {{ form.end_date.label_tag }}
+                        {{ form.end_date }}
+                    </div>
+                </div>
             </div>
             
-            <div class="availability-container">
-                <div class="section-title">
-                    <i class="uil uil-schedule"></i>
-                    <h3>Available Days</h3>
-                </div>
-                
-                <div class="options-grid">
-                    <!-- Monday -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="monday" checked>
-                        <label for="monday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Monday</span>
-                        </label>
+            <div class="form-group">
+                <label>Time Range</label>
+                <div class="time-range-container">
+                    <div class="time-group">
+                        {{ form.start_time.label_tag }}
+                        {{ form.start_time }}
                     </div>
-                    
-                    <!-- Tuesday -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="tuesday" checked>
-                        <label for="tuesday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Tuesday</span>
-                        </label>
+                    <div class="time-group">
+                        {{ form.end_time.label_tag }}
+                        {{ form.end_time }}
                     </div>
-                    
-                    <!-- Wednesday -->
-                    <div class="option-card">
-                        <input type="checkbox" id="wednesday">
-                        <label for="wednesday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Wednesday</span>
-                        </label>
-                    </div>
-                    
-                    <!-- Thursday -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="thursday" checked>
-                        <label for="thursday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Thursday</span>
-                        </label>
-                    </div>
-                    
-                    <!-- Friday -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="friday" checked>
-                        <label for="friday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Friday</span>
-                        </label>
-                    </div>
-                    
-                    <!-- Saturday -->
-                    <div class="option-card">
-                        <input type="checkbox" id="saturday">
-                        <label for="saturday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Saturday</span>
-                        </label>
-                    </div>
-                    
-                    <!-- Sunday -->
-                    <div class="option-card">
-                        <input type="checkbox" id="sunday">
-                        <label for="sunday">
-                            <i class="uil uil-calender"></i>
-                            <span class="option-text">Sunday</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="section-title" style="margin-top: 40px;">
-                    <i class="uil uil-clock"></i>
-                    <h3>Available Time Slots</h3>
-                </div>
-                
-                <div class="options-grid">
-                    <!-- 9:00 AM -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="time9" checked>
-                        <label for="time9">
-                            <i class="uil uil-clock-nine"></i>
-                            <span class="option-text">9:00 AM</span>
-                        </label>
-                    </div>
-                    
-                    <!-- 10:00 AM -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="time10" checked>
-                        <label for="time10">
-                            <i class="uil uil-clock-ten"></i>
-                            <span class="option-text">10:00 AM</span>
-                        </label>
-                    </div>
-                    
-                    <!-- 11:00 AM -->
-                    <div class="option-card">
-                        <input type="checkbox" id="time11">
-                        <label for="time11">
-                            <i class="uil uil-clock-eleven"></i>
-                            <span class="option-text">11:00 AM</span>
-                        </label>
-                    </div>
-                    
-                    <!-- 12:00 PM -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="time12" checked>
-                        <label for="time12">
-                            <i class="uil uil-clock-twelve"></i>
-                            <span class="option-text">12:00 PM</span>
-                        </label>
-                    </div>
-                    
-                    <!-- 1:00 PM -->
-                    <div class="option-card selected">
-                        <input type="checkbox" id="time1" checked>
-                        <label for="time1">
-                            <i class="uil uil-clock"></i>
-                            <span class="option-text">1:00 PM</span>
-                        </label>
-                    </div>
-                    
-                    <!-- 2:00 PM -->
-                    <div class="option-card">
-                        <input type="checkbox" id="time2">
-                        <label for="time2">
-                            <i class="uil uil-clock-two"></i>
-                            <span class="option-text">2:00 PM</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="summary-box">
-                    <div class="summary-title">Your Availability Summary</div>
-                    <div class="summary-content">
-                        <div class="summary-item">Monday: 9AM, 10AM, 12PM, 1PM</div>
-                        <div class="summary-item">Tuesday: 9AM, 10AM, 12PM, 1PM</div>
-                        <div class="summary-item">Thursday: 9AM, 10AM, 12PM, 1PM</div>
-                        <div class="summary-item">Friday: 9AM, 10AM, 12PM, 1PM</div>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-outline">
-                        <i class="uil uil-times-circle"></i> Cancel
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="uil uil-save"></i> Save Availability
-                    </button>
                 </div>
             </div>
+            
+            <div class="repeat-section">
+                <div class="form-group">
+                    {{ form.repeat.label_tag }}
+                    {{ form.repeat }}
+                </div>
+                
+                <div id="repeat-days-container">
+                    <label>Repeat on</label>
+                    <div class="repeat-days">
+                        <input type="checkbox" class="day-checkbox" id="monday" name="repeat_days" value="Monday">
+                        <label for="monday" class="day-label">Monday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="tuesday" name="repeat_days" value="Tuesday">
+                        <label for="tuesday" class="day-label">Tuesday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="wednesday" name="repeat_days" value="Wednesday">
+                        <label for="wednesday" class="day-label">Wednesday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="thursday" name="repeat_days" value="Thursday">
+                        <label for="thursday" class="day-label">Thursday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="friday" name="repeat_days" value="Friday">
+                        <label for="friday" class="day-label">Friday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="saturday" name="repeat_days" value="Saturday">
+                        <label for="saturday" class="day-label">Saturday</label>
+                        
+                        <input type="checkbox" class="day-checkbox" id="sunday" name="repeat_days" value="Sunday">
+                        <label for="sunday" class="day-label">Sunday</label>
+                    </div>
+                    </div>
+            </div>
+            
+            <button type="submit" class="btn">Add Availability</button>
+        </form>
+    
+
+        <div>
+            <h1>Current Availability</h1>
+            {% if availabilities %}
+            <div class="availability-table-container">
+                <table class="availability-table">
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Time</th>
+                            <th>Repeat</th>
+                            <th>Repeat Days</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for availability in availabilities %}
+                        <tr>
+                            <td>{{ availability.start_date|date:"M d, Y" }}</td>
+                            <td>{{ availability.end_date|date:"M d, Y" }}</td>
+                            <td>{{ availability.start_time|time:"g:i A" }} - {{ availability.end_time|time:"g:i A" }}</td>
+                            <td>
+                                {% if availability.repeat == 'none' %}
+                                    Does not repeat
+                                {% else %}
+                                    {{ availability.repeat|capfirst }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if availability.repeat == 'weekly' %}
+                                    {{ availability.get_repeat_days_display }}
+                                {% elif availability.repeat == 'daily' %}
+                                    Daily
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-availability">
+                <p>No availability slots added yet.</p>
+            </div>
+            {% endif %}
+
         </div>
     </div>
+
+
+
+    <script src="{% static 'js/slot.js' %}"></script>
+
     {% endblock %}

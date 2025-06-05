@@ -5,10 +5,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone_number')
 
 class DoctorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'specialization', 'hospital')
-    search_fields = ('name', 'specialization', 'hospital')
+    list_display = ('get_name', 'specialization', 'hospital')
+    search_fields = ('user__name', 'specialization', 'hospital')
     list_filter = ('specialization',)
-    
+
+    def get_name(self, obj):
+        return obj.user.name if obj.user else '-'
+    get_name.short_description = 'Name'
 
 # class DoctorAdmin(admin.ModelAdmin):
 #     list_display = ('name', 'specialization')
@@ -38,3 +41,4 @@ admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Doctors, DoctorAdmin)
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(Records, RecordsAdmin)
+admin.site.register(DoctorAvailability)

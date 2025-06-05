@@ -19,7 +19,7 @@
         </div>
         <div class="menu-items">
             <ul class="nav-links">
-                <li><a href="{% url 'dashboard' %}">
+                <li><a href="{% url 'doctor_dashboard' %}">
                     <i class="uil uil-estate"></i>
                     <span class="link-name">Dahsboard</span>
                 </a></li>
@@ -27,13 +27,17 @@
                     <i class="uil uil-files-landscapes"></i>
                     <span class="link-name">Appoitments</span>
                 </a></li>
-                <li><a href="{% url 'list_doctor' %}">
-                    <i class="uil uil-chart"></i>
-                    <span class="link-name">Doctors</span>
-                </a></li>
                 <li><a href="#">
-                    <i class="uil uil-thumbs-up"></i>
+                    <i class="uil uil-chart"></i>
                     <span class="link-name">Patients</span>
+                </a></li>
+                <li><a href="{% url 'doctor_profile' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">My Profile</span>
+                </a></li>
+                <li><a href="{% url 'doctor_availability' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Availability</span>
                 </a></li>
 
             </ul>
@@ -55,7 +59,7 @@
             </div>
             
             <!--<img src="images/profile.jpg" alt="">-->
-                <h3>Welcome, Admin {{ request.user.name }}</h3>
+                <h3>Welcome, Dr.{{ doctor.user.name }}</h3>
 
         </div>
 
@@ -96,7 +100,7 @@
     <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center;">
             <i class="uil uil-clock-three"></i>
-            <span class="text">Doctor List</span>
+            <span class="text">Appoitments</span>
         </div>
         <a href="{% url 'create_doctor' %}" style="
             display: inline-flex;
@@ -115,50 +119,41 @@
     <div class="activity-data">
         <!-- Header Row (Labels) -->
         <div class="data-header">
-            <div class="data image">
-                <span class="data-title">Image</span>
-            </div>
+
             <div class="data names">
                 <span class="data-title">Name</span>
             </div>
             <div class="data specialization">
-                <span class="data-title">Specialization</span>
+                <span class="data-title">Gender</span>
             </div>
             <div class="data hospital">
-                <span class="data-title">Hospital</span>
+                <span class="data-title">Age</span>
             </div>
             <div class="data address">
-                <span class="data-title">Address</span>
+                <span class="data-title">Place</span>
             </div>
         </div>
 
-        <!-- Doctor Data Rows -->
-        {% for doctor in doctors %}
+        <!-- Patient Data Rows -->
+        {% for patient in patients %}
         <div class="data-row">
-            <div class="data image">
-                <span class="data-list">
-                    {% if doctor.image %}
-                        <img src="{{ doctor.image.url }}" width="40" height="40" style="object-fit: cover; border-radius: 50%;">
-                    {% else %}
-                        No Image
-                    {% endif %}
-                </span>
+   
+            <div class="data names">
+                <span class="data-list">{{ patient.name }}</span>
             </div>
             <div class="data names">
-                <span class="data-list">{{ doctor.user.name }}</span>
+                <span class="data-list">{{ patient.gender }}</span>
             </div>
-            <div class="data specialization">
-                <span class="data-list">{{ doctor.specialization }}</span>
+            <div class="data names">
+                <span class="data-list">{{ patient.age }}</span>
             </div>
-            <div class="data hospital">
-                <span class="data-list">{{ doctor.hospital }}</span>
-            </div>
-            <div class="data address">
-                <span class="data-list">{{ doctor.address }}</span>
+            <div class="data names">
+                <span class="data-list">{{ patient.place }}</span>
             </div>
         </div>
-        {% endfor %}
     </div>
+        {% endfor %}
+
 </div>
         </div>
     </section>

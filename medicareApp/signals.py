@@ -12,7 +12,7 @@ def send_appointment_notification(sender, instance, created, **kwargs):
 
         message = (
             f"Appointment confirmed\n\n"
-            f"Your appointment with Dr. {instance.doctor.name} on {formatted_datetime} is confirmed."
+            f"Your appointment with Dr. {instance.doctor.user.name} on {formatted_datetime} is confirmed."
         )
 
         send_appointment_email.apply_async(args=[

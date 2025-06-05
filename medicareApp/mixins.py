@@ -27,6 +27,14 @@ def custom400(message, errors=None):
         "errors": errors if errors is not None else {}
     }, status=status.HTTP_400_BAD_REQUEST)
 
+def custom401(message, errors=None):
+    return Response({
+        "status": "Unauthorized",
+        "status_code": 401,
+        "message": message,
+        "errors": errors if errors is not None else {}
+    }, status=status.HTTP_401_UNAUTHORIZED)
+
 def custom404(request, message):
     return Response({
         "status": "Failed 'Not Found'",

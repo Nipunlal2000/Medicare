@@ -52,21 +52,39 @@ class EmailSerializer(serializers.Serializer):
     class Meta:
         fields = ['email']
         
-        
+
+
 class DoctorSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name', read_only=True)
+
     class Meta:
         model = Doctors
-        fields = '__all__'
+        fields = ['id', 'user', 'name', 'specialization', 'hospital', 'address', 'image']
+
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.SerializerMethodField(read_only=True)
+    patient_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Appointment
-        fields = ['id', 'patient', 'doctor', 'date', 'time']
+        fields = ['id', 'patient', 'doctor', 'date', 'time', 'doctor_name', 'patient_name']
 
-    # Optional: Validate if appointment already exists for this doctor at the same date and time
+    def get_doctor_name(self, obj):
+        return obj.doctor.user.name if obj.doctor and obj.doctor.user else None
+
+    def get_patient_name(self, obj):
+        return obj.patient.name if obj.patient else None
+
     def validate(self, data):
-        if Appointment.objects.filter(doctor=data['doctor'], date=data['date'], time=data['time']).exists():
-            raise serializers.ValidationError("This time slot is already booked for the selected doctor.")
+        doctor = data.get('doctor')
+        date = data.get('date')
+        time = data.get('time')
+
+        if Appointment.objects.filter(doctor=doctor, date=date, time=time).exists():
+            raise serializers.ValidationError({
+                "detail": "This time slot is already booked for the selected doctor."
+            })
         return data
 
 class RecordsSerializer(serializers.ModelSerializer):

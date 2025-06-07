@@ -13,19 +13,27 @@ class DoctorAdmin(admin.ModelAdmin):
         return obj.user.name if obj.user else '-'
     get_name.short_description = 'Name'
 
-# class DoctorAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'specialization')
-#     fieldsets = (
-#         ('Basic Information', {
-#             'fields': ('name', 'image', 'specialization', 'hospital', 'address')
-#         }),
-#         ('Availability - Days', {
-#             'fields': ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
-#         }),
-#         ('Availability - Time Slots', {
-#             'fields': ('time_9am', 'time_10am', 'time_11am', 'time_12pm', 'time_1pm', 'time_2pm')
-#         }),
-#     )
+class DoctorAvailabilityAdmin(admin.ModelAdmin):
+    list_display = (
+        'doctor_name',
+        'start_date',
+        'end_date',
+        'start_time',
+        'end_time',
+        'repeat',
+        'get_repeat_days',
+    )
+    list_filter = ('repeat', 'start_date')
+    search_fields = ('doctor__user__name',)
+    ordering = ('-start_date',)
+
+    def doctor_name(self, obj):
+        return obj.doctor.user.name if obj.doctor and obj.doctor.user else "-"
+    doctor_name.short_description = "Doctor"
+
+    def get_repeat_days(self, obj):
+        return ', '.join(obj.repeat_days) if obj.repeat == 'weekly' and obj.repeat_days else '-'
+    get_repeat_days.short_description = "Repeat Days"
 
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ('patient', 'doctor', 'date', 'time')
@@ -41,4 +49,4 @@ admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Doctors, DoctorAdmin)
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(Records, RecordsAdmin)
-admin.site.register(DoctorAvailability)
+admin.site.register(DoctorAvailability, DoctorAvailabilityAdmin)

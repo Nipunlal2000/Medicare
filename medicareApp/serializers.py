@@ -43,7 +43,7 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):    
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ['name','email','password','confirm_password','phone_number','age','place','gender']
         
         
 class EmailSerializer(serializers.Serializer):
@@ -79,12 +79,46 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         doctor = data.get('doctor')
         date = data.get('date')
-        time = data.get('time')
+        time_slot = data.get('time')
 
-        if Appointment.objects.filter(doctor=doctor, date=date, time=time).exists():
+        # 1️⃣ Check for existing appointment (avoid double booking)
+        if Appointment.objects.filter(doctor=doctor, date=date, time=time_slot).exists():
             raise serializers.ValidationError({
                 "detail": "This time slot is already booked for the selected doctor."
             })
+
+        # 2️⃣ Check if the doctor is available on this date and time
+        weekday = date.strftime('%A')  # e.g., 'Monday'
+
+        availabilities = DoctorAvailability.objects.filter(
+            doctor=doctor,
+            start_date__lte=date
+        ).filter(
+            models.Q(end_date__gte=date) | models.Q(end_date__isnull=True)
+        )
+
+        available = False
+        for slot in availabilities:
+            if slot.repeat == 'none' and slot.start_date != date:
+                continue
+            if slot.repeat == 'daily':
+                pass  # every day is valid
+            elif slot.repeat == 'weekdays' and weekday not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
+                continue
+            elif slot.repeat == 'weekly' and slot.repeat_days and weekday not in slot.repeat_days:
+                continue
+            elif slot.repeat == 'none' and slot.start_date != date:
+                continue
+
+            if slot.start_time <= time_slot < slot.end_time:
+                available = True
+                break
+
+        if not available:
+            raise serializers.ValidationError({
+                "detail": "The doctor is not available at this date and time."
+            })
+
         return data
 
 class RecordsSerializer(serializers.ModelSerializer):

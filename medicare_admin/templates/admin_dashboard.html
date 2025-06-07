@@ -48,11 +48,13 @@
     </nav>
     <section class="dashboard">
         <div class="top">
-            <i class="uil uil-bars sidebar-toggle"></i>
+            <!-- <i class="uil uil-bars sidebar-toggle"></i> -->
             <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
+                <form method="get">
+                    <i class="uil uil-search"></i>
+                    <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                </form>
+            </div>            
             
             <!--<img src="images/profile.jpg" alt="">-->
                 <h3>Welcome, Admin {{ request.user.name }}</h3>
@@ -76,18 +78,18 @@
                     <div class="box box1">
                         <i class="uil uil-user-md"></i>  <!-- You can use a doctor-related icon -->
                         <span class="text">Total Doctors</span>
-                        <span class="number">{{ doctors|length }}</span>
+                        <span class="number">{{ total_doctors }}</span>
                     </div>
 
                     <div class="box box2">
                         <i class="uil uil-comments"></i>
-                        <span class="text">Appoitments</span>
-                        <span class="number">20</span>
+                        <span class="text">Total Appoitments</span>
+                        <span class="number">{{ total_patients_with_appointments }}</span>
                     </div>
                     <div class="box box3">
                         <i class="uil uil-share"></i>
-                        <span class="text">Patients</span>
-                        <span class="number">10</span>
+                        <span class="text">Total Patients</span>
+                        <span class="number">{{ total_regular_users }}</span>
                     </div>
                 </div>
             </div>
@@ -102,21 +104,21 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 35px;
+            padding: 5px;
             height: 35px;
             margin-right: 100px;
-            background: #007bff;
+            background: #0e4bf1;
             color: white; 
             border-radius: 4px;
             text-decoration: none;
-            font-weight: bold;">+</a>    
+            font-weight: bold;">Add Doctor <i class="fa-solid fa-user-plus" style="color: white; padding-left: 2px; font-size: 15px;"></i></a>    
     </div>
 
     <div class="activity-data">
         <!-- Header Row (Labels) -->
         <div class="data-header">
             <div class="data image">
-                <span class="data-title">Image</span>
+                <span class="data-title"></span>
             </div>
             <div class="data names">
                 <span class="data-title">Name</span>
@@ -133,7 +135,7 @@
         </div>
 
         <!-- Doctor Data Rows -->
-        {% for doctor in doctors %}
+        {% for doctor in page_obj  %}
         <div class="data-row">
             <div class="data image">
                 <span class="data-list">
@@ -160,11 +162,27 @@
         {% endfor %}
     </div>
 </div>
+
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&page=1" class="first-last">&laquo; First</a>
+        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="first-last">Previous</a>
+
+    {% endif %}
+
+    <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="first-last">Next</a>
+        <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}" class="first-last">Last &raquo;</a>
+    {% endif %}
+</div>
         </div>
     </section>
 
 
-
+    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
     <script src="{% static 'js/dashboard.js' %}"></script>
 
     {% endblock %}

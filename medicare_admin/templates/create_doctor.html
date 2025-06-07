@@ -33,10 +33,16 @@
                             <label>Specialization</label>
                             <input type="text" placeholder="Enter specialization" name="specialization" required>
                         </div>
-                        <div class="input-field">
-                            <label>Image</label>
-                            <input type="file" placeholder="Upload photo" name="image" required>
-                        </div>
+<div class="input-field file-upload">
+    <label for="image">Image</label>
+    <div class="file-wrapper">
+        <input type="file" name="image" id="image" required>
+        <label for="image" class="file-btn">Choose File</label>
+        <span id="file-name">No file chosen</span>
+    </div>
+</div>
+
+
                         <div class="input-field">
                             <label>Hospital</label>
                             <input type="text" placeholder="Enter hospital name" name="hospital" required>
@@ -57,7 +63,27 @@
                         </div> -->
                     </div>
                 </div>
-                <!-- <div class="details ID">
+                <!--  -->
+                <button class="sumbit">
+                    <span class="btnText">Submit</span>
+                    <i class="uil uil-navigator"></i>
+                </button>
+
+                </div>
+            </div> 
+            </div>
+        </form>
+    </div>
+
+    <script src="{% static 'js/create_doctor.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    
+     
+    {% endblock %}
+
+
+
+                    <!-- <div class="details ID">
                     <span class="title">Identity Details</span>
                     <div class="fields">
                         <div class="input-field">
@@ -155,17 +181,3 @@
                             <span class="btnText">Back</span>
                         </div>
                          -->
-                        <button class="sumbit">
-                            <span class="btnText">Submit</span>
-                            <i class="uil uil-navigator"></i>
-                        </button>
-                    </div>
-                </div> 
-            </div>
-        </form>
-    </div>
-
-    <script src="{% static 'js/dashboard.js' %}"></script>
-    
-     
-    {% endblock %}

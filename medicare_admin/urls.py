@@ -2,9 +2,9 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('index', index, name='home'),
-    path('', admin_dashboard, name='dashboard'),
-    path('login/', admin_login, name='login'),
+    path('index/', index, name='home'),
+    path('dashboard/', admin_dashboard, name='dashboard'),
+    path('', admin_login, name='login'),
     path('logout/', admin_logout, name='logout'),
     path('doctor/list/', list_doctor, name='list_doctor'),
     path('doctor/create/', create_doctor, name='create_doctor'),
@@ -18,5 +18,6 @@ urlpatterns = [
 
     
     path('doctor/availability/', doctor_availability_view, name='doctor_availability'),
+    path('doctor/availability/edit/<int:pk>/', edit_availability_view, name='doctor_edit_availability'),
     # path('doctor/<int:doctor_id>/book/', book_appointment, name='book_appointment'),
 ]

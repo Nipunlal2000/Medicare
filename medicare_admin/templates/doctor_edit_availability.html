@@ -5,6 +5,7 @@
     {% block head %}
     <link rel="stylesheet" href="{% static 'css/slot.css' %}" />
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
     {% endblock %}
@@ -53,15 +54,7 @@
     </nav>
     <section class="dashboard" style="position: absolute;">
         <div class="top">
-            <!-- <i class="uil uil-bars sidebar-toggle"></i> -->
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
-            
-            <!--<img src="images/profile.jpg" alt="">-->
                 <h3>Welcome, Dr.{{ doctor.user.name }}</h3>
-
         </div>
 
     {% endblock %}
@@ -72,7 +65,7 @@
     {% block content %}
     <div class="container">
 
-    <h1>Availability Schedule</h1>
+    <h1>Edit Availability Schedule</h1>
     
         <form method="post" id="availabilityForm">
             {% csrf_token %}
@@ -194,10 +187,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if availability.pk %}
-                                <a href="{% url 'doctor_edit_availability' availability.pk %}"><i class="fa-solid fa-pen-to-square" style="color:black;"></i></a>
-                                {% endif %}
-                            </td>                        
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -213,7 +203,7 @@
     </div>
 
 
-    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
+
     <script src="{% static 'js/slot.js' %}"></script>
 
     {% endblock %}

@@ -42,9 +42,14 @@
           <input type="submit" value="Login" />
         </div>
       </form>
-      <a href="{% url 'doctor_login' %}" class="align-items:center">Doctor Login</a>
+      <p style="text-align: center; margin-top: 10px;">  Doctor?
+        <a href="{% url 'doctor_login' %}" style="text-decoration: none; font-weight: bold; color: #007bff;">
+        Login
+        </a>
+      </p>
     </div>
 
+    
     <script src="{% static 'js/script.js' %}"></script>
 
     {% endblock %}

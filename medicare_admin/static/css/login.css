@@ -21,11 +21,25 @@ body {
   border-radius: 8px;
   background-color: #fff;
 }
-.container header {
-  font-size: 22px;
-  font-weight: 600;
-  color: #333;
+
+.container header{
+    position: relative;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
 }
+.container header::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 3px;
+    width: 27px;
+    border-radius: 8px;
+    background-color: #4070f4;
+}
+
+
 .container form {
   margin-top: 30px;
 }

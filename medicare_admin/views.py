@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 def index(request):
     return render(request,'index.html')
@@ -17,15 +18,45 @@ def admin_login(request):
         user = authenticate(request, email=email, password=password)
         if user is not None and user.is_staff:
             login(request, user)
-            return redirect('/')
+            return redirect('dashboard')
         else:
             messages.error(request, "Invalid credentials or not an admin user")
     return render(request, 'admin_login.html')
 
 @login_required(login_url='admin_login')
 def admin_dashboard(request):
-    doctors = Doctors.objects.all()
-    return render(request, 'admin_dashboard.html',{'doctors':doctors,})
+    query = request.GET.get('q', '')
+
+    doctors_list = Doctors.objects.all()
+
+    if query:
+        doctors_list = doctors_list.filter(
+            Q(user__name__icontains=query) |
+            Q(specialization__icontains=query) |
+            Q(hospital__icontains=query)
+        )
+    total_doctors = doctors_list.count()
+    doctor_user_ids = Doctors.objects.values_list('user_id', flat=True)
+
+    regular_users = UserProfile.objects.filter(
+        is_superuser=False,
+    ).exclude(id__in=doctor_user_ids)
+
+    total_regular_users = regular_users.count()
+    
+    total_patients_with_appointments = Appointment.objects.values('patient').distinct().count()
+    
+    paginator = Paginator(doctors_list, 5)  # 5 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'admin_dashboard.html', {
+        'page_obj': page_obj,
+        'query': query,
+        'total_doctors' : total_doctors,
+        'total_regular_users': total_regular_users,
+        'total_patients_with_appointments' : total_patients_with_appointments 
+    })
 
 def admin_logout(request):
     logout(request)
@@ -34,8 +65,25 @@ def admin_logout(request):
 
 @login_required(login_url='admin_login')
 def list_doctor(request):
-    doctors = Doctors.objects.all()
-    return render(request, 'list_doctors.html',{'doctors':doctors})
+    query = request.GET.get('q', '')  
+
+    doctors_list = Doctors.objects.all()
+
+    if query:
+        doctors_list = doctors_list.filter(
+            Q(user__name__icontains=query) |
+            Q(specialization__icontains=query) |
+            Q(hospital__icontains=query)
+        )
+
+    paginator = Paginator(doctors_list, 6)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'list_doctors.html', {
+        'page_obj': page_obj,
+        'query': query,
+    })
 
 @login_required(login_url='admin_login')
 def create_doctor(request):
@@ -57,7 +105,7 @@ def create_doctor(request):
             doctor = form.save(commit=False)
             doctor.user = user
             doctor.save()
-            return redirect('/')
+            return redirect('dashboard')
     else:
         form = DoctorForm()
 
@@ -82,7 +130,7 @@ def update_doctor(request, pk):
             form.save()
             user.name = name  # update name from POST data
             user.save()
-            return redirect('/')
+            return redirect('dashboard')
     else:
         form = DoctorForm(instance=doctor)
     
@@ -99,8 +147,8 @@ def delete_doctor(request, pk):
     doctor = get_object_or_404(Doctors, pk=pk)
     if request.method == 'POST':
         doctor.delete()
-        return redirect('/')
-    return redirect('/')
+        return redirect('dashboard')
+    return redirect('dashboard')
 
 
 
@@ -156,6 +204,26 @@ def doctor_availability_view(request):
     }
     
     return render(request, 'doctor_availability.html', context)
+
+@login_required(login_url='doctor_login')
+def edit_availability_view(request, pk):
+    if not hasattr(request.user, 'doctor'):
+        raise PermissionDenied("Only doctors can access this page.")
+    
+    doctor = request.user.doctor
+    availability = get_object_or_404(DoctorAvailability, pk=pk, doctor=doctor)
+
+    if request.method == 'POST':
+        form = AvailabilityForm(request.POST, instance=availability)
+        if form.is_valid():
+            form.save()
+            return redirect('doctor_availability')
+    else:
+        form = AvailabilityForm(instance=availability)
+
+    return render(request, 'doctor_edit_availability.html', {'form': form,'doctor' : doctor})
+
+
 
 @login_required(login_url='doctor_login')
 def doctor_profile(request):

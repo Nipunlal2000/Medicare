@@ -21,7 +21,7 @@
         </div>
         <div class="menu-items">
             <ul class="nav-links">
-                <li><a href="{% url 'doctor_dashboard' %}">
+                <li><a href="{% url 'dashboard' %}">
                     <i class="uil uil-estate"></i>
                     <span class="link-name">Dahsboard</span>
                 </a></li>
@@ -29,18 +29,15 @@
                     <i class="uil uil-files-landscapes"></i>
                     <span class="link-name">Appoitments</span>
                 </a></li>
-                <li><a href="#">
+                <li><a href="{% url 'list_doctor' %}">
                     <i class="uil uil-chart"></i>
+                    <span class="link-name">Doctors</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-thumbs-up"></i>
                     <span class="link-name">Patients</span>
                 </a></li>
-                <li><a href="#">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">My Profile</span>
-                </a></li>
-                <li><a href="{% url 'doctor_availability' %}">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Availability</span>
-                </a></li>            </ul>
+            </ul>
             
             <ul class="logout-mode">
                 <li><a href="{% url 'logout' %}">
@@ -53,15 +50,14 @@
 
     <section class="dashboard">
         <div class="top">
-            <i class="uil uil-bars sidebar-toggle"></i>
             <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
+                <form method="get">
+                    <i class="uil uil-search"></i>
+                    <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                </form>
             </div>
-            
-            <!--<img src="images/profile.jpg" alt="">-->
+                <!--<img src="images/profile.jpg" alt="">-->
                 <h3>Welcome, Admin {{ request.user.name }}</h3>
-
         </div>
 
     {% endblock %}
@@ -74,7 +70,7 @@
         </div>
 
         <div class="doctor-list">
-            {% for doctor in doctors %}
+            {% for doctor in page_obj  %}
 
 
             <div class="doctor-card">
@@ -105,10 +101,20 @@
             {% endfor %}
         </div>
 
-        <div class="pagination">
-            <button class="btn prev">Previous</button>
-            <button class="btn next">Next</button>
-        </div>
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&page=1" class="first-last">&laquo; First</a>
+        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="first-last">Previous</a>
+
+    {% endif %}
+
+    <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="first-last">Next</a>
+        <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}" class="first-last">Last &raquo;</a>
+    {% endif %}
+</div>
 
         <footer class="footer">
         </footer>

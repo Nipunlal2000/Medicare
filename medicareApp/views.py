@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView,Response
+from rest_framework import generics
 from .serializers import *
 # from .tasks import send_otp_email
 from django.core.cache import cache
@@ -8,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .mixins import *
 from .utils import try_except_wrapper, flatten_errors
 from django.db import IntegrityError
+from django.db.models import Q
+
 
 # Create your views here.
 
@@ -105,3 +108,124 @@ class ReportsUploadView(APIView):
             serializer.save(patient=request.user)
             return custom201("Report uploaded successfully.", serializer.data)
         return custom400("Report upload failed.", flatten_errors(serializer.errors))
+
+
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data)
+
+
+class DoctorListView(generics.ListAPIView):
+    queryset = Doctors.objects.all()
+    serializer_class = DoctorListSerializer
+
+
+class DoctorAvailabilityView(APIView):
+    def get(self, request, doctor_id):
+        print(f"[DoctorAvailabilityView] doctor_id: {doctor_id}")
+        date_str = request.query_params.get('date')
+        print(f"[DoctorAvailabilityView] Raw date string: {date_str}")
+
+        if not date_str:
+            return Response({"error": "Date is required"}, status=400)
+
+        try:
+            date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+            print(f"[DoctorAvailabilityView] Parsed date: {date}")
+        except ValueError as ve:
+            print(f"[DoctorAvailabilityView] Date parsing failed: {ve}")
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD"}, status=400)
+
+        try:
+            availabilities = DoctorAvailability.objects.filter(
+                doctor_id=doctor_id,
+                start_date__lte=date
+            ).filter(Q(end_date__gte=date) | Q(end_date__isnull=True))
+
+            print(f"[DoctorAvailabilityView] Found {availabilities.count()} availability entries")
+
+            serializer = DoctorAvailabilitySerializer(availabilities, many=True)
+            return Response(serializer.data)
+
+        except Exception as e:
+            print(f"[DoctorAvailabilityView] Unexpected error: {e}")
+            return Response({"error": "Something went wrong", "details": str(e)}, status=500)
+
+
+
+class AvailableTimeSlotsView(APIView):
+    def get(self, request, doctor_id):
+        print(f"[AvailableTimeSlotsView] doctor_id: {doctor_id}")
+        date_str = request.query_params.get('date')
+        print(f"[AvailableTimeSlotsView] Raw date string: {date_str}")
+
+        if not date_str:
+            return Response({"error": "Date is required"}, status=400)
+
+        try:
+            date = timezone.datetime.strptime(date_str, '%Y-%m-%d').date()
+            print(f"[AvailableTimeSlotsView] Parsed date: {date}")
+        except ValueError as ve:
+            print(f"[AvailableTimeSlotsView] Date parsing failed: {ve}")
+            return Response({"error": "Invalid date format. Use YYYY-MM-DD"}, status=400)
+
+        try:
+            availability = DoctorAvailability.objects.filter(
+                doctor_id=doctor_id,
+                start_date__lte=date
+            ).filter(Q(end_date__gte=date) | Q(end_date__isnull=True)).first()
+
+            if not availability:
+                print("[AvailableTimeSlotsView] No availability found for this doctor on given date")
+                return Response({"message": "Doctor not available on selected date"}, status=404)
+
+            from datetime import timedelta, datetime
+
+            booked_times = Appointment.objects.filter(
+                doctor_id=doctor_id,
+                date=date
+            ).values_list('time', flat=True)
+
+            # print(f"[AvailableTimeSlotsView] Booked times: {list(booked_times)}")
+
+            time_slots = []
+            current = datetime.combine(date, availability.start_time)
+            end = datetime.combine(date, availability.end_time)
+
+            while current < end:
+                time_str = current.time().strftime('%H:%M')
+                if current.time() not in booked_times:
+                    time_slots.append(time_str)
+                current += timedelta(minutes=30)
+
+            # print(f"[AvailableTimeSlotsView] Available slots: {time_slots}")
+            return Response({"available_slots": time_slots})
+
+        except Exception as e:
+            print(f"[AvailableTimeSlotsView] Unexpected error: {e}")
+            return Response({"error": "Something went wrong", "details": str(e)}, status=500)
+
+
+class AppointmentHistoryView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentSerializer
+
+    def get_queryset(self):
+        return Appointment.objects.filter(patient=self.request.user).order_by('-date')
+
+
+class CancelAppointmentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            appointment = Appointment.objects.get(pk=pk, patient=request.user)
+            appointment.delete()
+            return Response({'message': 'Appointment cancelled successfully.'})
+        except Appointment.DoesNotExist:
+            return Response({'error': 'Appointment not found or unauthorized.'}, status=404)

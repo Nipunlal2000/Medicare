@@ -13,4 +13,12 @@ urlpatterns = [
     path('book-appointment/', BookAppointmentView.as_view(), name='book-appointment'),
     path('upload-report/', ReportsUploadView.as_view(), name='upload-report'),
     
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
+    path('doctors/', DoctorListView.as_view(), name='doctor-list'),
+    path('doctor/<int:doctor_id>/availability/', DoctorAvailabilityView.as_view(), name='doctor-availability'),
+    path('doctor/<int:doctor_id>/timeslots/', AvailableTimeSlotsView.as_view(), name='available-timeslots'),
+    path('appointments/history/', AppointmentHistoryView.as_view(), name='appointment-history'),
+    path('appointment/<int:pk>/cancel/', CancelAppointmentView.as_view(), name='cancel-appointment'),
+
+    
 ]

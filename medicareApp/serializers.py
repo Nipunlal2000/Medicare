@@ -52,6 +52,35 @@ class EmailSerializer(serializers.Serializer):
     class Meta:
         fields = ['email']
         
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        exclude = ['password', 'user_permissions', 'groups']
+
+class DoctorListSerializer(serializers.ModelSerializer):
+    available_today = serializers.SerializerMethodField()
+    name = serializers.CharField(source='user.name', read_only=True)
+
+    class Meta:
+        model = Doctors
+        fields = ['id', 'user','name', 'specialization', 'hospital', 'available_today']
+
+    def get_available_today(self, obj):
+        today = timezone.now().date()
+        return obj.availability.filter(start_date__lte=today).exists()
+
+class DoctorAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorAvailability
+        fields = ['start_time', 'end_time', 'repeat', 'repeat_days']
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source='doctor.user.name', read_only=True)
+
+    class Meta:
+        model = Appointment
+        fields = ['id', 'doctor_name', 'date', 'time']
+
 
 
 class DoctorSerializer(serializers.ModelSerializer):

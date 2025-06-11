@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
     <link rel="stylesheet" href="{% static 'css/list.css' %}" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
 
     {% endblock %}
 
@@ -52,10 +53,12 @@
         <div class="top">
             <div class="search-box">
                 <form method="get">
-                    <i class="uil uil-search"></i>
                     <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </form>
-            </div>
+            </div>  
                 <!--<img src="images/profile.jpg" alt="">-->
                 <h3>Welcome, Admin {{ request.user.name }}</h3>
         </div>

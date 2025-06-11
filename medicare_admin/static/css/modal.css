@@ -1,60 +1,65 @@
-/* Modal background */
+/* Modal Styles */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 10;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.5);
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
 }
 
-/* Modal content box */
 .modal-content {
-  background-color: #fff;
-  margin: 15% auto;
-  padding: 30px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 80%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Close icon */
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
 .close {
-  float: right;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-/* Confirm and Cancel buttons */
+.close:hover {
+    color: black;
+}
+
+.confirm-delete, .cancel-delete {
+    padding: 8px 16px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
 .confirm-delete {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-right: 10px;
-  border-radius: 5px;
-  cursor: pointer;
+    background-color: #dc3545;
+    color: white;
 }
 
 .cancel-delete {
-  background-color: #ccc;
-  color: #333;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+    background-color: #6c757d;
+    color: white;
 }
 
 .confirm-delete:hover {
-  background-color: #c0392b;
+    background-color: #c82333;
 }
 
 .cancel-delete:hover {
-  background-color: #b3b3b3;
+    background-color: #5a6268;
 }

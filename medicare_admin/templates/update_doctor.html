@@ -7,30 +7,32 @@
     {% endblock %}
 
 
-
     {% block content %}
     <div class="container">
         {% if edit %}
         <header>Doctor Update</header>
         {% else %}
+        <header>Doctor Registration</header>
         {% endif %}
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="doctorForm" novalidate>
             {% csrf_token %}
             <div class="form first">
                 <div class="details personal">
                     <span class="title">Personal Details</span>
                     <div class="fields">
                         <div class="input-field">
-                            <label>Full Name</label>
-                            <input type="text" placeholder="Enter doctor name" name="name" value="{{ doctor_name}}" required>
+                            <label>Full Name <span class="required">*</span></label>
+                            <input type="text" placeholder="Enter doctor name" name="name" id="name" value="{{ doctor_name }}">
+                            <span class="error-message" id="name-error"></span>
                         </div>
                         
                         <div class="input-field">
-                            <label>Specialization</label>
-                            <input type="text" placeholder="Enter specialization" name="specialization" value= "{{ doctor.specialization }}" required>
+                            <label>Specialization <span class="required">*</span></label>
+                            <input type="text" placeholder="Enter specialization" name="specialization" id="specialization" value="{{ doctor.specialization }}">
+                            <span class="error-message" id="specialization-error"></span>
                         </div>
 
-                        <div class="input-field" >
+                        <div class="input-field">
                             <div class="image-preview">
                                 {% if doctor.image %}
                                     <img src="{{ doctor.image.url }}" id="image-preview" width="50" height="50">
@@ -39,38 +41,40 @@
                                 {% endif %}
                             </div>
 
-                            <div class="input-field file-upload">
-                                <label for="image">Image</label>
-                                <div class="file-wrapper">
-                                    <input type="file" name="image" id="image" id="image-upload" required>
+                            <div class="file-upload">
+                                <label for="image">Image <span class="required">*</span></label>
+                                <div class="file-wrapper" id="file-wrapper">
+                                    <input type="file" name="image" id="image" accept="image/*">
                                     <label for="image" class="file-btn">Choose File</label>
                                     <span id="file-name">No file chosen</span>
                                 </div>
+                                <span class="error-message" id="image-error"></span>
                             </div>
                         </div>
 
                         <div class="input-field">
-                            <label>Hospital</label>
-                            <input type="text" placeholder="Enter hospital name" name="hospital" value= "{{ doctor.hospital }}" required>
+                            <label>Hospital <span class="required">*</span></label>
+                            <input type="text" placeholder="Enter hospital name" name="hospital" id="hospital" value="{{ doctor.hospital }}">
+                            <span class="error-message" id="hospital-error"></span>
                         </div>
 
                         <div class="input-field">
-                            <label>Address</label>
-                            <input type="text" placeholder="Enter address" name="address" value= "{{ doctor.address }}" required>
+                            <label>Address <span class="required">*</span></label>
+                            <input type="text" placeholder="Enter address" name="address" id="address" value="{{ doctor.address }}">
+                            <span class="error-message" id="address-error"></span>
                         </div>
                     </div>
                 </div>
 
-                        <button class="sumbit">
-                            <span class="btnText">Submit</span>
-                            <i class="uil uil-navigator"></i>
-                        </button>
-                    </div>
-                </div> 
+                <div class="form-footer">
+                    <button type="submit" class="submit">
+                        <span class="btnText">Submit</span>
+                        <i class="uil uil-navigator"></i>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
-
 
     <script src="{% static 'js/create_doctor.js' %}"></script>
     <script src="{% static 'js/doctor.js' %}"></script>

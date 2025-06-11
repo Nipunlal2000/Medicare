@@ -63,7 +63,7 @@ class DoctorListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Doctors
-        fields = ['id', 'user','name', 'specialization', 'hospital', 'available_today']
+        fields = ['id', 'user','name', 'specialization', 'hospital','image', 'available_today']
 
     def get_available_today(self, obj):
         today = timezone.now().date()
@@ -74,12 +74,12 @@ class DoctorAvailabilitySerializer(serializers.ModelSerializer):
         model = DoctorAvailability
         fields = ['start_time', 'end_time', 'repeat', 'repeat_days']
 
-class AppointmentSerializer(serializers.ModelSerializer):
-    doctor_name = serializers.CharField(source='doctor.user.name', read_only=True)
+# class AppointmentSerializer(serializers.ModelSerializer):
+#     doctor_name = serializers.CharField(source='doctor.user.name', read_only=True)
 
-    class Meta:
-        model = Appointment
-        fields = ['id', 'doctor_name', 'date', 'time']
+#     class Meta:
+#         model = Appointment
+#         fields = ['id', 'doctor_name', 'date', 'time']
 
 
 

@@ -25,16 +25,34 @@ def admin_login(request):
 
 @login_required(login_url='admin_login')
 def admin_dashboard(request):
-    query = request.GET.get('q', '')
-
+    query = request.GET.get('q', '').strip()
+    
     doctors_list = Doctors.objects.all()
 
     if query:
-        doctors_list = doctors_list.filter(
+        # Create separate queries for different match types
+        starts_with = (
+            Q(user__name__istartswith=query) |
+            Q(specialization__istartswith=query) |
+            Q(hospital__istartswith=query)
+        )
+        
+        contains = (
             Q(user__name__icontains=query) |
             Q(specialization__icontains=query) |
             Q(hospital__icontains=query)
-        )
+        ) & ~starts_with  # Exclude items that already match starts_with
+
+        # Combine with priority to starts_with matches
+        doctors_list = doctors_list.filter(starts_with | contains).annotate(
+            match_priority=models.Case(
+                models.When(starts_with, then=1),
+                models.When(contains, then=2),
+                default=3,
+                output_field=models.IntegerField()
+            )
+        ).order_by('match_priority', 'user__name')
+    
     total_doctors = doctors_list.count()
     doctor_user_ids = Doctors.objects.values_list('user_id', flat=True)
 
@@ -46,16 +64,16 @@ def admin_dashboard(request):
     
     total_patients_with_appointments = Appointment.objects.values('patient').distinct().count()
     
-    paginator = Paginator(doctors_list, 5)  # 5 per page
+    paginator = Paginator(doctors_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'admin_dashboard.html', {
         'page_obj': page_obj,
         'query': query,
-        'total_doctors' : total_doctors,
+        'total_doctors': total_doctors,
         'total_regular_users': total_regular_users,
-        'total_patients_with_appointments' : total_patients_with_appointments 
+        'total_patients_with_appointments': total_patients_with_appointments 
     })
 
 def admin_logout(request):
@@ -65,18 +83,35 @@ def admin_logout(request):
 
 @login_required(login_url='admin_login')
 def list_doctor(request):
-    query = request.GET.get('q', '')  
-
+    query = request.GET.get('q', '').strip()
+    
     doctors_list = Doctors.objects.all()
 
     if query:
-        doctors_list = doctors_list.filter(
+        # Create separate queries for different match types
+        starts_with = (
+            Q(user__name__istartswith=query) |
+            Q(specialization__istartswith=query) |
+            Q(hospital__istartswith=query)
+        )
+        
+        contains = (
             Q(user__name__icontains=query) |
             Q(specialization__icontains=query) |
             Q(hospital__icontains=query)
-        )
+        ) & ~starts_with  # Exclude items that already match starts_with
 
-    paginator = Paginator(doctors_list, 6)  
+        # Combine with priority to starts_with matches
+        doctors_list = doctors_list.filter(starts_with | contains).annotate(
+            match_priority=models.Case(
+                models.When(starts_with, then=1),
+                models.When(contains, then=2),
+                default=3,
+                output_field=models.IntegerField()
+            )
+        ).order_by('match_priority', 'user__name')
+    
+    paginator = Paginator(doctors_list, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

@@ -35,9 +35,10 @@ def custom401(message, errors=None):
         "errors": errors if errors is not None else {}
     }, status=status.HTTP_401_UNAUTHORIZED)
 
-def custom404(request, message):
+def custom404(message, errors=None):
     return Response({
         "status": "Failed 'Not Found'",
         "status_code": 404,
-        "message": message
+        "message": message,
+        "errors": errors if errors else {}
     }, status=status.HTTP_404_NOT_FOUND)

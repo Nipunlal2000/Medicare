@@ -230,35 +230,63 @@ nav.close ~ .dashboard .top{
     color: var(--text-color);
     cursor: pointer;
 }
-.dashboard .top .search-box{
+
+.dashboard .top .search-box {
     position: relative;
     height: 45px;
     max-width: 600px;
     width: 100%;
     margin: 0 30px;
 }
-.top .search-box input{
-    position: absolute;
+
+.top .search-box input {
     border: 1px solid var(--border-color);
     background-color: var(--panel-color);
-    padding: 0 25px 0 50px;
-    border-radius: 5px;
-    height: 100%;
+    padding: 0 60px 0 20px;
+    border-radius: 25px;  /* More rounded corners */
+    height: 50px;
     width: 100%;
     color: var(--text-color);
     font-size: 15px;
     font-weight: 400;
     outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-.top .search-box i{
+
+.top .search-box input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.top .search-box .search-btn {
     position: absolute;
-    left: 15px;
-    font-size: 22px;
-    z-index: 10;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--black-light-color);
+    right: 5px;
+    top: 5px;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
+
+.top .search-box .search-btn:hover {
+    /* background: var(--primary-hover-color); */
+    background-color: white ;
+    color: blue;
+    transform: scale(1.05);
+}
+
+.top .search-box .search-btn i {
+    font-size: 16px;
+}
+
 .top img{
     width: 40px;
     border-radius: 50%;

@@ -1,0 +1,206 @@
+    {% extends 'index.html' %}
+    {% load static %}
+
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    {% endblock %}
+
+    {% block nav %} 
+
+
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+               <img src="{% static 'images/logo.png' %}" width="70" height="70" style="object-fit: cover; border-radius: 50%;" alt="">
+            </div>
+            <span class="logo_name">Medicare</span>
+        </div>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{% url 'doctor_dashboard' %}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="{% url 'booked_appointments' %}">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Appoitments</span>
+                </a></li>
+                <li><a href="{% url 'doctor_profile' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">My Profile</span>
+                </a></li>
+                <li><a href="{% url 'doctor_availability' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Availability</span>
+                </a></li>
+
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="{% url 'logout' %}">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name"> Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="dashboard">
+        <div class="top">
+            <!-- <i class="uil uil-bars sidebar-toggle"></i> -->
+            <div class="search-box">
+                <form method="get">
+                    <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>         
+            
+            <!--<img src="images/profile.jpg" alt="">-->
+                <h3>Welcome, Admin {{ request.user.name }}</h3>
+
+        </div>
+
+    {% endblock %}
+
+
+
+
+    {% block content %}
+
+        <div class="dash-content">
+            <div class="overview">
+               
+
+        <div class="activity">
+            <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Appointments</span>
+                </div>
+            </div>
+
+            <div class="activity-data">
+                <!-- Header Row (Labels) -->
+                <div class="data-header">
+                    <div class="data names">
+                        <span class="data-title">Patient Name</span>
+                    </div>
+                    <div class="data specialization">
+                        <span class="data-title">Email</span>
+                    </div>
+                    <div class="data hospital">
+                        <span class="data-title">Date</span>
+                    </div>
+                    <div class="data address">
+                        <span class="data-title">Time</span>
+                    </div>
+                </div>
+
+                <!-- Patient Data Rows -->
+                {% for appointment in appointments %}
+                <div class="data-row">
+                    <div class="data names">
+                        <span class="data-list">{{ appointment.patient.name  }}</span>
+                    </div>
+                    <div class="data specialization">
+                        <span class="data-list">{{ appointment.patient.email }}</span>
+                    </div>
+                    <div class="data hospital">
+                        <span class="data-list">{{appointment.date|date:"M d, Y"}}</span>
+                    </div>
+                    <div class="data address">
+                        <span class="data-list">{{ appointment.time|time:"h:i A" }}</span>
+                    </div>
+                </div>
+
+                {% empty %}
+                <div class="empty-message" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                    No appointments found.
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+
+
+
+        <!-- <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?q={{ query }}&page=1" class="first-last">&laquo; First</a>
+                <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="first-last">Previous</a>
+
+            {% endif %}
+
+            <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="first-last">Next</a>
+                <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}" class="first-last">Last &raquo;</a>
+            {% endif %}
+        </div> -->
+        </div>
+    </section>
+
+
+
+
+    <script>
+    function openModal(pk, name) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('delete-form');
+        const message = document.getElementById('modal-message');
+        
+        // Update modal content
+        message.textContent = `Are you sure you want to delete Dr. ${name}?`;
+        form.action = `/doctor/delete/${pk}/`;  // Updated to match your URL pattern
+        
+        // Show modal
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+    </script>
+
+    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
+
+    {% endblock %}
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Patient Name</th>
+      <th>Email</th>
+      <th>Date</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for appointment in appointments %}
+    <tr>
+      <td>{{ appointment.patient.name }}</td>
+      <td>{{ appointment.patient.email }}</td>
+      <td>{{ appointment.date|date:"M d, Y" }}</td>
+      <td>{{ appointment.time|time:"h:i A" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No appointments found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>

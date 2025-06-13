@@ -61,10 +61,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'medicareApp',
-    'medicare_admin'
+    'medicare_admin',
+    'axes',
 ]
 
 MIDDLEWARE = [
+    'axes.middleware.AxesMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -73,6 +75,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',  # ⬅️ Axes first
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Axes Configuration
+AXES_FAILURE_LIMIT = 3                   # ❌ Block after 5 attempts
+AXES_COOLOFF_TIME = 1                    # ⏳ Block duration in minutes
+AXES_LOCKOUT_CALLABLE = None            # (default lockout)
+AXES_RESET_ON_SUCCESS = True            # 🔁 Reset on successful login
+AXES_ENABLED = True               # Keep Axes enabled
+AXES_ONLY_USER_FAILURES = True          # Count per user, not IP
+AXES_LOCK_OUT_AT_FAILURE = False  # Prevent Axes from auto-locking request
+
 
 ROOT_URLCONF = 'medicare_project.urls'
 

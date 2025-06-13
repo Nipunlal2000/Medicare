@@ -72,7 +72,7 @@ class DoctorListSerializer(serializers.ModelSerializer):
 class DoctorAvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorAvailability
-        fields = ['start_time', 'end_time', 'repeat', 'repeat_days']
+        fields = ['start_date', 'end_date', 'start_time', 'end_time', 'repeat_days']
 
 # class AppointmentSerializer(serializers.ModelSerializer):
 #     doctor_name = serializers.CharField(source='doctor.user.name', read_only=True)
@@ -105,50 +105,62 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def get_patient_name(self, obj):
         return obj.patient.name if obj.patient else None
 
-    def validate(self, data):
-        doctor = data.get('doctor')
-        date = data.get('date')
-        time_slot = data.get('time')
+def validate(self, data):
+    doctor = data.get('doctor')
+    patient = data.get('patient') or self.context['request'].user
+    date = data.get('date')
+    time_slot = data.get('time')
 
-        # 1️⃣ Check for existing appointment (avoid double booking)
-        if Appointment.objects.filter(doctor=doctor, date=date, time=time_slot).exists():
-            raise serializers.ValidationError({
-                "detail": "This time slot is already booked for the selected doctor."
-            })
+    # 1️⃣ Prevent booking in the past
+    if date < today_date.today():
+        raise serializers.ValidationError({
+            "detail": "You cannot book an appointment in the past."
+        })
 
-        # 2️⃣ Check if the doctor is available on this date and time
-        weekday = date.strftime('%A')  # e.g., 'Monday'
+    # 2️⃣ Prevent same patient booking multiple slots on the same day
+    if Appointment.objects.filter(patient=patient, date=date).exists():
+        raise serializers.ValidationError({
+            "detail": "You already have an appointment on this date."
+        })
 
-        availabilities = DoctorAvailability.objects.filter(
-            doctor=doctor,
-            start_date__lte=date
-        ).filter(
-            models.Q(end_date__gte=date) | models.Q(end_date__isnull=True)
-        )
+    # 3️⃣ Prevent booking an already booked time slot with that doctor
+    if Appointment.objects.filter(doctor=doctor, date=date, time=time_slot).exists():
+        raise serializers.ValidationError({
+            "detail": "This time slot is already booked for the selected doctor."
+        })
 
-        available = False
-        for slot in availabilities:
-            if slot.repeat == 'none' and slot.start_date != date:
-                continue
-            if slot.repeat == 'daily':
-                pass  # every day is valid
-            elif slot.repeat == 'weekdays' and weekday not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
-                continue
-            elif slot.repeat == 'weekly' and slot.repeat_days and weekday not in slot.repeat_days:
-                continue
-            elif slot.repeat == 'none' and slot.start_date != date:
-                continue
+    # 4️⃣ Check if the doctor is available at that date and time
+    weekday = date.strftime('%A')
+    availabilities = DoctorAvailability.objects.filter(
+        doctor=doctor,
+        start_date__lte=date
+    ).filter(
+        models.Q(end_date__gte=date) | models.Q(end_date__isnull=True)
+    )
 
-            if slot.start_time <= time_slot < slot.end_time:
-                available = True
-                break
+    available = False
+    for slot in availabilities:
+        if slot.repeat == 'none' and slot.start_date != date:
+            continue
+        if slot.repeat == 'daily':
+            pass
+        elif slot.repeat == 'weekdays' and weekday not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
+            continue
+        elif slot.repeat == 'weekly' and slot.repeat_days and weekday not in slot.repeat_days:
+            continue
+        elif slot.repeat == 'none' and slot.start_date != date:
+            continue
 
-        if not available:
-            raise serializers.ValidationError({
-                "detail": "The doctor is not available at this date and time."
-            })
+        if slot.start_time <= time_slot < slot.end_time:
+            available = True
+            break
 
-        return data
+    if not available:
+        raise serializers.ValidationError({
+            "detail": "The doctor is not available at this date and time."
+        })
+
+    return data
 
 class RecordsSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,6 +2,7 @@ from django.db import models
 from . manager import *
 from django.contrib.auth.models import AbstractUser , Group , Permission
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -61,35 +62,32 @@ class Appointment(models.Model):
 
 
 class DoctorAvailability(models.Model):
-    REPEAT_CHOICES = [
-        ('none', 'No Repeat'),
-        ('daily', 'Daily'),
-        ('weekly', 'Weekly'),
-        ('weekdays', 'Weekdays (Mon-Fri)'),
-    ]
-
     doctor = models.ForeignKey('Doctors', on_delete=models.CASCADE, related_name='availability')
     start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)  # If null, treat as single-day availability
+    end_date = models.DateField(null=True, blank=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    repeat = models.CharField(max_length=20, choices=REPEAT_CHOICES, default='none')
+    repeat_days = models.JSONField(null=True, blank=True)  # Example: ["Monday", "Wednesday"]
 
-    # Optional: specific weekdays if repeat == 'weekly'
-    repeat_days = models.JSONField(null=True, blank=True)  # e.g., ["Monday", "Wednesday"]
-    
-    def get_repeat_days_display(self):
-        if self.repeat == 'weekly' and self.repeat_days:
-            return ', '.join(self.repeat_days)
-        return ''
+    def clean(self):
+        # 1. Time check
+        if self.start_time >= self.end_time:
+            raise ValidationError("End time must be after start time.")
+
+        # 2. Date range check
+        if self.end_date and self.end_date < self.start_date:
+            raise ValidationError("End date cannot be before start date.")
+
+        # 3. Repeat day check (if you're using repeat_days only)
+        if not self.repeat_days:
+            raise ValidationError("Please select at least one repeat day.")
 
     def __str__(self):
-        range_str = f"{self.start_date}"
+        date_range = f"{self.start_date}"
         if self.end_date and self.start_date != self.end_date:
-            range_str += f" to {self.end_date}"
-
-        return f"{self.doctor.user.name} available from {range_str}, {self.start_time}–{self.end_time}, repeat: {self.repeat}"
-
+            date_range += f" to {self.end_date}"
+        repeat_info = ', '.join(self.repeat_days) if self.repeat_days else 'One-time only'
+        return f"{self.doctor.user.name} | {date_range} | {self.start_time}-{self.end_time} | {repeat_info}"
 
 
 

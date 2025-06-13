@@ -45,12 +45,12 @@
                         <span class="error-message" id="image-error"></span>
                     </div>
                     <div class="input-field">
-                        <label>Hospital <span class="required">*</span></label>
+                        <label>Hospital Name<span class="required">*</span></label>
                         <input type="text" placeholder="Enter hospital name" name="hospital" id="hospital">
                         <span class="error-message" id="hospital-error"></span>
                     </div>
                     <div class="input-field">
-                        <label>Address <span class="required">*</span></label>
+                        <label>Work Address <span class="required">*</span></label>
                         <input type="text" placeholder="Enter address" name="address" id="address">
                         <span class="error-message" id="address-error"></span>
                     </div>
@@ -58,9 +58,14 @@
             </div>
             
             <div class="form-footer">
+
                 <button type="submit" class="submit">
                     <span class="btnText">Submit</span>
                     <i class="uil uil-navigator"></i>
+                </button>
+                <button type="reset" class="reset-btn">
+                    <span class="btnText">Reset</span>
+                    <i class="uil uil-trash-alt"></i>
                 </button>
                 <a href="{% url 'dashboard' %}" class="back-button">Back</a>
             </div>

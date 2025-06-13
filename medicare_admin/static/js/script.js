@@ -41,16 +41,18 @@ function createPass() {
 emailInput.addEventListener("keyup", checkEmail);
 passInput.addEventListener("keyup", createPass);
 
-// Calling Function on Form Submit
-// form.addEventListener("submit", (e) => {
-//   e.preventDefault(); //preventing form submitting
-//   checkEmail();
-//   createPass();
-  
-//   if (
-//     !emailField.classList.contains("invalid") &&
-//     !passField.classList.contains("invalid")
-//   ) {
-//     location.href = form.getAttribute("action");
-//   }
-// });
+
+ const countdownEl = document.getElementById('cooldown');
+  if (countdownEl) {
+    let seconds = parseInt(countdownEl.innerText);
+
+    const interval = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        countdownEl.innerText = "0";
+        clearInterval(interval);
+      } else {
+        countdownEl.innerText = seconds;
+      }
+    }, 1000);
+  }

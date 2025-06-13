@@ -53,30 +53,33 @@
                         </div>
 
                         <div class="input-field">
-                            <label>Hospital <span class="required">*</span></label>
+                            <label>Hospital Name<span class="required">*</span></label>
                             <input type="text" placeholder="Enter hospital name" name="hospital" id="hospital" value="{{ doctor.hospital }}">
                             <span class="error-message" id="hospital-error"></span>
                         </div>
 
                         <div class="input-field">
-                            <label>Address <span class="required">*</span></label>
+                            <label>Work Address <span class="required">*</span></label>
                             <input type="text" placeholder="Enter address" name="address" id="address" value="{{ doctor.address }}">
                             <span class="error-message" id="address-error"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-footer">
-                    <button type="submit" class="submit">
-                        <span class="btnText">Submit</span>
-                        <i class="uil uil-navigator"></i>
-                    </button>
-                </div>
+            <div class="form-footer">
+                <button type="submit" class="submit">
+                    <span class="btnText">Submit</span>
+                    <i class="uil uil-navigator"></i>
+                </button>
+                <a href="{% url 'dashboard' %}" class="back-button">Back</a>
+            </div>
             </div>
         </form>
     </div>
 
-    <script src="{% static 'js/create_doctor.js' %}"></script>
+
+
+    <script src="{% static 'js/update_doctor.js' %}"></script>
     <script src="{% static 'js/doctor.js' %}"></script>
     
      

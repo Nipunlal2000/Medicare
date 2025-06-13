@@ -5,6 +5,7 @@
     {% block head %}
     <link rel="stylesheet" href="{% static 'css/slot.css' %}" />
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
     {% endblock %}
@@ -27,10 +28,6 @@
                 <li><a href="#">
                     <i class="uil uil-files-landscapes"></i>
                     <span class="link-name">Appoitments</span>
-                </a></li>
-                <li><a href="#">
-                    <i class="uil uil-chart"></i>
-                    <span class="link-name">Patients</span>
                 </a></li>
                 <li><a href="{% url 'doctor_profile' %}">
                     <i class="uil uil-thumbs-up"></i>
@@ -60,7 +57,7 @@
             </div> -->
             
             <!--<img src="images/profile.jpg" alt="">-->
-                <h3>Welcome, Dr.{{ doctor.user.name }}</h3>
+                <!-- <h3>Welcome, Dr.{{ doctor.user.name }}</h3> -->
 
         </div>
 
@@ -120,10 +117,10 @@
             </div>
             
             <div class="repeat-section">
-                <div class="form-group">
+                <!-- <div class="form-group">
                     {{ form.repeat.label_tag }}
                     {{ form.repeat }}
-                </div>
+                </div> -->
                 
                 <div id="repeat-days-container">
                     <label>Repeat on</label>
@@ -157,62 +154,103 @@
     
 
         <div>
-            <h1>Current Schedule</h1>
-            {% if availabilities %}
-            <div class="availability-table-container">
-                <table class="availability-table">
-                    <thead>
-                        <tr>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Time</th>
-                            <th>Repeat</th>
-                            <th>Repeat Days</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for availability in availabilities %}
-                        <tr>
-                            <td>{{ availability.start_date|date:"M d, Y" }}</td>
-                            <td>{{ availability.end_date|date:"M d, Y" }}</td>
-                            <td>{{ availability.start_time|time:"g:i A" }} - {{ availability.end_time|time:"g:i A" }}</td>
-                            <td>
-                                {% if availability.repeat == 'none' %}
-                                    Does not repeat
-                                {% else %}
-                                    {{ availability.repeat|capfirst }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if availability.repeat == 'weekly' %}
-                                    {{ availability.get_repeat_days_display }}
-                                {% elif availability.repeat == 'daily' %}
-                                    Daily
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if availability.pk %}
-                                <a href="{% url 'doctor_edit_availability' availability.pk %}"><i class="fa-solid fa-pen-to-square" style="color:black;"></i></a>
-                                {% endif %}
-                            </td>                        
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+
+        <h1>Current Schedule</h1>
+
+        {% if availabilities %}
+        <div class="availability-table-container">
+            <table class="availability-table">
+                <thead>
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Time</th>
+                        <th>Repeat Days</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for availability in availabilities %}
+                    <tr>
+                        <td>{{ availability.start_date|date:"M d, Y" }}</td>
+                        <td>{{ availability.end_date|date:"M d, Y" }}</td>
+                        <td>{{ availability.start_time|time:"g:i A" }} - {{ availability.end_time|time:"g:i A" }}</td>
+                    
+                        <td>
+                            {% if availability.repeat_days %}
+                                {{ availability.repeat_days|join:", " }}
+                            {% else %}
+                                One-time only
+                            {% endif %}
+                        </td>
+                    
+                        <td>
+                            {% if availability.pk %}
+                            <a href="{% url 'doctor_edit_availability' availability.pk %}" style="text-decoration: none;">
+                                <i class="fa-solid fa-pen-to-square" style="color:black;"></i>
+                            </a>
+
+                            <!-- Trigger Delete Modal -->
+                            <button type="button" onclick="openModal('{{ availability.pk }}')" style="border: none; background: none; padding-left: 10px;">
+                                <i class="fa-solid fa-trash" style="color: red; cursor: pointer;"></i>
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-availability">
+            <p>No availability slots added yet.</p>
+        </div>
+        {% endif %}
+
+                <!-- Single Modal placed outside the loop -->
+        <div id="deleteModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3 id="modal-message">Are you sure you want to delete this availability slot?</h3>
+                <form id="delete-form" method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="confirm-delete">Yes, Delete</button>
+                    <button type="button" class="cancel-delete" onclick="closeModal()">Cancel</button>
+                </form>
             </div>
-            {% else %}
-            <div class="no-availability">
-                <p>No availability slots added yet.</p>
-            </div>
-            {% endif %}
+        </div>
+
+
 
         </div>
     </div>
 
+    <script>
+    function openModal(pk) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('delete-form');
+        const message = document.getElementById('modal-message');
 
+        // Update the message (you could include more info like date/time too)
+        message.textContent = "Are you sure you want to delete this availability slot?";
+
+        // Set form action dynamically
+        form.action = `/doctor/availability/delete/${pk}/`;  // make sure this matches your URLconf
+
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+    </script>
     <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
     <script src="{% static 'js/slot.js' %}"></script>
 

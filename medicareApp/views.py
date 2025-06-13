@@ -90,8 +90,8 @@ class BookAppointmentView(APIView):
             try:
                 serializer.save()
                 return custom201("Appointment booked successfully.", serializer.data)
-            except Exception as e:
-                return custom400("Appointment save failed.", str(e.__class__.__name__))
+            except IntegrityError:
+                return custom400("Appointment save failed.",  "This slot is already taken.")
         
         return custom400("Appointment booking failed.", flatten_errors(serializer.errors))
 

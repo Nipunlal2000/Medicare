@@ -10,8 +10,33 @@
 
     {% block content %}
 
+    <style>
+      .error-box {
+        background-color: #ffe6e6;
+        color: #a94442;
+        border: 1px solid #f5c6cb;
+        padding: 10px 15px;
+        margin: 20px 0px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 10px;
+        text-align: center;
+      }
+    </style>
+
     <div class="container">
+      <div class="logo-image">
+        <img src="{% static 'images/logo.png' %}" width="150" height="150" ;>
+      </div>
+      <hr style="margin-bottom: 30px;">
+
       <header>Doctor Login</header>
+
+      {% if error %}
+        <div class="error-box">
+          <p>{{ error }}</p>
+        </div>
+      {% endif %}
 
       <form method="POST">
         {% csrf_token %}
@@ -31,6 +56,7 @@
             <i class="bx bx-hide show-hide"></i>
           </div>
 
+
           <span class="error password-error"> <i class="bx bx-error-circle error-icon"></i>
             <p class="error-text">
               Please enter atleast 8 charatcer with number, symbol, small and capital letter.
@@ -46,8 +72,10 @@
         <a href="{% url 'login' %}" style="text-decoration: none; font-weight: bold; color: #007bff;">
         Login
         </a>
-      </p>    </div>
+      </p>    
+    </div>
 
+    
     <script src="{% static 'js/script.js' %}"></script>
 
     {% endblock %}

@@ -11,9 +11,20 @@
     {% block content %}
 
     <div class="container">
+      <div class="logo-image" >
+         <img src="{% static 'images/logo.png' %}" width="150" height="150" style="border-radius: 50%;">
+      </div>
+      <hr style="margin-bottom: 30px;">
       <header>Admin Login</header>
 
-      <form method="POST">
+        {% if error %}
+          <div class="error-box">
+            <p>{{ error }}</p>
+          </div>
+        {% endif %}
+        
+        <form method="POST">
+
         {% csrf_token %}
 
         <div class="field email-field">

@@ -20,10 +20,9 @@ class DoctorAvailabilityAdmin(admin.ModelAdmin):
         'end_date',
         'start_time',
         'end_time',
-        'repeat',
         'get_repeat_days',
     )
-    list_filter = ('repeat', 'start_date')
+    list_filter = ('start_date',)  
     search_fields = ('doctor__user__name',)
     ordering = ('-start_date',)
 
@@ -32,9 +31,10 @@ class DoctorAvailabilityAdmin(admin.ModelAdmin):
     doctor_name.short_description = "Doctor"
 
     def get_repeat_days(self, obj):
-        return ', '.join(obj.repeat_days) if obj.repeat == 'weekly' and obj.repeat_days else '-'
+        return ', '.join(obj.repeat_days) if obj.repeat_days else 'One-time only'
     get_repeat_days.short_description = "Repeat Days"
-
+    
+    
 class AppointmentAdmin(admin.ModelAdmin):
     list_display = ('patient', 'doctor', 'date', 'time')
     search_fields = ('doctor__name', 'patient__email')

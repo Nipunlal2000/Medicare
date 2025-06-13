@@ -10,6 +10,15 @@
 
     {% block nav %} 
 
+    <style>
+        .dash-content .boxes {
+        display: flex;
+
+        justify-content: space-around;
+        }
+    </style>
+
+
     <nav>
         <div class="logo-name">
             <div class="logo-image">
@@ -23,13 +32,9 @@
                     <i class="uil uil-estate"></i>
                     <span class="link-name">Dahsboard</span>
                 </a></li>
-                <li><a href="#">
+                <li><a href="{% url 'booked_appointments' %}">
                     <i class="uil uil-files-landscapes"></i>
                     <span class="link-name">Appoitments</span>
-                </a></li>
-                <li><a href="#">
-                    <i class="uil uil-chart"></i>
-                    <span class="link-name">Patients</span>
                 </a></li>
                 <li><a href="{% url 'doctor_profile' %}">
                     <i class="uil uil-thumbs-up"></i>
@@ -54,9 +59,13 @@
         <div class="top">
             <!-- <i class="uil uil-bars sidebar-toggle"></i> -->
             <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div>
+                <form method="get">
+                    <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div> 
             
             <!--<img src="images/profile.jpg" alt="">-->
                 <h3>Welcome, Dr.{{ doctor.user.name }}</h3>
@@ -79,19 +88,13 @@
                 <div class="boxes">
                     <div class="box box1">
                         <i class="uil uil-user-md"></i>  <!-- You can use a doctor-related icon -->
-                        <span class="text">Total Doctors</span>
-                        <span class="number">{{ doctors|length }}</span>
+                        <span class="text">Appointments</span>
+                        <span class="number">{{ appointments|length }}</span>
                     </div>
-
                     <div class="box box2">
-                        <i class="uil uil-comments"></i>
-                        <span class="text">Appoitments</span>
-                        <span class="number">20</span>
-                    </div>
-                    <div class="box box3">
                         <i class="uil uil-share"></i>
                         <span class="text">Patients</span>
-                        <span class="number">10</span>
+                        <span class="number">{{ patients|length }}</span>
                     </div>
                 </div>
             </div>
@@ -139,9 +142,15 @@
                 <span class="data-list">{{ patient.place }}</span>
             </div>
         </div>
-    </div>
-        {% endfor %}
+    
 
+        {% empty %}
+        <div class="empty-message" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+            No doctors found
+        </div>
+
+        {% endfor %}
+    </div>
 </div>
         </div>
     </section>
@@ -149,5 +158,7 @@
 
 
     <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
+
 
     {% endblock %}

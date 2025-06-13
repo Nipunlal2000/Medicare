@@ -1,0 +1,162 @@
+    {% extends 'index.html' %}
+    {% load static %}
+
+
+    {% block head %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    {% endblock %}
+
+    {% block nav %} 
+
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+               <img src="{% static 'images/logo.png' %}" width="70" height="70" style="object-fit: cover; border-radius: 50%;" alt="">
+            </div>
+            <span class="logo_name">Medicare</span>
+        </div>
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="{% url 'dashboard' %}">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dahsboard</span>
+                </a></li>
+                <li><a href="{% url 'list_appointment' %}">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Appointments</span>
+                </a></li>
+                <li><a href="{% url 'list_doctor' %}">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Doctors</span>
+                </a></li>
+                <li><a href="{% url 'list_patients' %}">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Patients</span>
+                </a></li>
+
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="{% url 'logout' %}">
+                    <i class="uil uil-signout"></i>
+                    <span class="link-name"> Logout</span>
+                </a></li>
+            </ul>
+        </div>
+    </nav>
+    <section class="dashboard">
+        <div class="top">
+            <div class="search-box">
+                <form method="get">
+                    <input type="text" name="q" placeholder="Search here..." value="{{ query }}">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>         
+            
+            <!--<img src="images/profile.jpg" alt="">-->
+                <h3>Welcome, Admin {{ request.user.name }}</h3>
+
+        </div>
+
+    {% endblock %}
+
+
+
+
+    {% block content %}
+
+        <div class="dash-content">
+            <div class="overview">
+
+                
+        <div class="activity">
+            <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Appointments</span>
+                </div>
+            </div>
+
+            <div class="activity-data">
+                <!-- Header Row (Labels) -->
+                <div class="data-header">
+                    <div class="data names">
+                        <span class="data-title">Patient Name</span>
+                    </div>
+                    <div class="data names">
+                        <span class="data-title">Doctor</span>
+                    </div>
+                    <div class="data specialization">
+                        <span class="data-title">Specialization</span>
+                    </div>
+                    <div class="data hospital">
+                        <span class="data-title">Date</span>
+                    </div>
+                    <div class="data address">
+                        <span class="data-title">Time</span>
+                    </div>
+                </div>
+
+                {% for appointment in page_obj %}
+                <div class="data-row">
+                    <div class="data names">
+                        <span class="data-list">{{ appointment.patient.name }}</span>
+                    </div>
+                    <div class="data specialization">
+                        <span class="data-list">{{ appointment.doctor.user.name }}</span>
+                    </div>
+                    <div class="data hospital">
+                        <span class="data-list">{{ appointment.doctor.specialization }}</span>
+                    </div>
+                    <div class="data names">
+                        <span class="data-list">{{ appointment.date }}</span>
+                    </div>
+                    <div class="data names">
+                        <span class="data-list">{{ appointment.time|time:"g:i A" }}</span>
+                    </div>
+                </div>
+
+                {% empty %}
+                <div class="empty-message" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                    No appointments found.
+                </div>
+
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+
+
+
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?q={{ query }}&page=1" class="first-last">&laquo; First</a>
+                <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="first-last">Previous</a>
+
+            {% endif %}
+
+            <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="first-last">Next</a>
+                <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}" class="first-last">Last &raquo;</a>
+            {% endif %}
+        </div>
+        </div>
+    </section>
+
+
+
+
+
+
+    <script src="https://kit.fontawesome.com/8b2928de81.js" crossorigin="anonymous"></script>
+
+    {% endblock %}

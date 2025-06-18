@@ -3,7 +3,6 @@ from django.shortcuts import render
 from rest_framework.views import APIView,Response
 from rest_framework import generics
 from .serializers import *
-# from .tasks import send_otp_email
 from django.core.cache import cache
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -11,7 +10,7 @@ from .mixins import *
 from .utils import try_except_wrapper, flatten_errors
 from django.db import IntegrityError
 from django.db.models import Q
-
+from datetime import date as today_date
 
 # Create your views here.
 
@@ -110,6 +109,21 @@ class ReportsUploadView(APIView):
             return custom201("Report uploaded successfully.", serializer.data)
         return custom400("Report upload failed.", flatten_errors(serializer.errors))
 
+class ReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @try_except_wrapper
+    def get(self, request):
+        user = request.user
+        reports = Records.objects.filter(patient=user).order_by('-uploaded_at')
+        
+        if not reports.exists():
+            return custom404("No reports found for the user.")
+
+        serializer = RecordsSerializer(reports, many=True)
+        return custom200("Reports fetched successfully.", serializer.data)
+
+
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -120,8 +134,13 @@ class UserProfileView(APIView):
 
 
 class DoctorListView(generics.ListAPIView):
-    queryset = Doctors.objects.all()
     serializer_class = DoctorListSerializer
+    queryset = Doctors.objects.all()
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['selected_date'] = self.request.query_params.get('date')
+        return context
 
 
 class DoctorAvailabilityView(APIView):
@@ -189,7 +208,11 @@ class AppointmentHistoryView(generics.ListAPIView):
     serializer_class = AppointmentSerializer
 
     def get_queryset(self):
-        return Appointment.objects.filter(patient=self.request.user).order_by('-date')
+        today = today_date.today()
+        return Appointment.objects.filter(
+            patient=self.request.user,
+            date__gte=today  # Only show today's and future appointments
+        ).order_by('date', 'time')
 
 
 class CancelAppointmentView(APIView):
@@ -203,3 +226,5 @@ class CancelAppointmentView(APIView):
             return custom200("Appointment cancelled successfully.")
         except Appointment.DoesNotExist:
             return custom404("Appointment not found or unauthorized.")
+        
+        

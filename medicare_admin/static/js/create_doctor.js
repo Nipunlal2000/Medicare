@@ -1,12 +1,11 @@
 const fileInput = document.getElementById("image");
-    const fileName = document.getElementById("file-name");
+const fileName = document.getElementById("file-name");
 
-    fileInput.addEventListener("change", function () {
-        fileName.textContent = this.files[0]?.name || "No file chosen";
-    });
+fileInput.addEventListener("change", function () {
+    fileName.textContent = this.files[0]?.name || "No file chosen";
+});
 
-
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('doctorForm');
     
     // Add asterisk to required fields
@@ -17,6 +16,22 @@ const fileInput = document.getElementById("image");
             label.innerHTML += ' <span class="required">*</span>';
         }
     });
+
+    // Password matching validation function
+    function validatePasswordMatch() {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        const errorElement = document.getElementById('confirm-password-error');
+        
+        if (confirmPassword.value && password.value !== confirmPassword.value) {
+            errorElement.textContent = 'Passwords do not match';
+            confirmPassword.classList.add('error');
+            return false;
+        }
+        errorElement.textContent = '';
+        confirmPassword.classList.remove('error');
+        return true;
+    }
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -58,6 +73,16 @@ const fileInput = document.getElementById("image");
         } else if (password.value.length < 8) {
             document.getElementById('password-error').textContent = 'Password must be at least 8 characters';
             password.classList.add('error');
+            isValid = false;
+        }
+
+        // Confirm Password validation
+        const confirmPassword = document.getElementById('confirm_password');
+        if (!confirmPassword.value.trim()) {
+            document.getElementById('confirm-password-error').textContent = 'Please confirm your password';
+            confirmPassword.classList.add('error');
+            isValid = false;
+        } else if (!validatePasswordMatch()) {
             isValid = false;
         }
 
@@ -105,6 +130,11 @@ const fileInput = document.getElementById("image");
             if (errorElement) {
                 errorElement.textContent = '';
                 this.classList.remove('error');
+                
+                // Special handling for password confirmation
+                if (this.id === 'password' || this.id === 'confirm_password') {
+                    validatePasswordMatch();
+                }
             }
         });
     });

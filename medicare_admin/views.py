@@ -24,6 +24,10 @@ def admin_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
+        if not email or not password:
+            error = "Please enter both email and password."
+            return render(request, 'admin_login.html', {'error': error})
+        
         # Get latest attempt
         attempt = AccessAttempt.objects.filter(username=email).order_by('-attempt_time').first()
         failures = 0
@@ -99,7 +103,7 @@ def admin_dashboard(request):
 
     total_regular_users = regular_users.count()
     
-    total_patients_with_appointments = Appointment.objects.values('patient').distinct().count()
+    total_patients_with_appointments = Appointment.objects.values('patient').count()
     
     paginator = Paginator(doctors_list, 10)
     page_number = request.GET.get('page')
@@ -231,7 +235,13 @@ def create_doctor(request):
         form = DoctorForm(request.POST, request.FILES)
         email = request.POST.get('email')
         password = request.POST.get('password')
-        name = request.POST.get('name')  # This is the name for UserProfile
+        confirm_password = request.POST.get('confirm_password')
+        name = request.POST.get('name')
+
+        # Validate password match
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return render(request, 'create_doctor.html', {'form': form})
 
         if form.is_valid() and email and password and name:
             # Create the user
@@ -245,12 +255,12 @@ def create_doctor(request):
             doctor = form.save(commit=False)
             doctor.user = user
             doctor.save()
+            messages.success(request, "Doctor created successfully")
             return redirect('dashboard')
     else:
         form = DoctorForm()
 
     return render(request, 'create_doctor.html', {'form': form})
-
 
 
 def detail_doctor(request, pk):
@@ -300,6 +310,10 @@ def doctor_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
+        if not email or not password:
+            error = "Please enter both email and password."
+            return render(request, 'admin_login.html', {'error': error})
+        
         # Fetch last attempt
         attempt = AccessAttempt.objects.filter(username=email).order_by('-attempt_time').first()
         failures = 0

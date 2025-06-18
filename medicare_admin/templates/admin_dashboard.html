@@ -25,15 +25,15 @@
                     <span class="link-name">Dahsboard</span>
                 </a></li>
                 <li><a href="{% url 'list_appointment' %}">
-                    <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name">Appoitments</span>
+                    <i class="uil uil-schedule"></i>
+                    <span class="link-name">Appointments</span>
                 </a></li>
                 <li><a href="{% url 'list_doctor' %}">
-                    <i class="uil uil-chart"></i>
+                    <i class="uil uil-user-md"></i>
                     <span class="link-name">Doctors</span>
                 </a></li>
                 <li><a href="{% url 'list_patients' %}">
-                    <i class="uil uil-thumbs-up"></i>
+                    <i class="uil uil-head-side"></i>
                     <span class="link-name">Patients</span>
                 </a></li>
 
@@ -79,18 +79,18 @@
                 </div>
                 <div class="boxes">
                     <div class="box box1">
-                        <i class="uil uil-user-md"></i>  <!-- You can use a doctor-related icon -->
+                        <i class="fa-solid fa-user-doctor"></i>  <!-- You can use a doctor-related icon -->
                         <span class="text">Total Doctors</span>
                         <span class="number">{{ total_doctors }}</span>
                     </div>
 
                     <div class="box box2">
-                        <i class="uil uil-comments"></i>
-                        <span class="text">Total Appoitments</span>
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        <span class="text">Total Appointments</span>
                         <span class="number">{{ total_patients_with_appointments }}</span>
                     </div>
                     <div class="box box3">
-                        <i class="uil uil-share"></i>
+                        <i class="fa-solid fa-hospital-user"></i>
                         <span class="text">Total Patients</span>
                         <span class="number">{{ total_regular_users }}</span>
                     </div>
@@ -100,21 +100,11 @@
 <div class="activity">
     <div class="title" style="display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center;">
-            <i class="uil uil-clock-three"></i>
+            <i class="uil uil-list-ul"></i>
+
             <span class="text">Doctor List</span>
         </div>
-        <a href="{% url 'create_doctor' %}" style="
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5px;
-            height: 35px;
-            margin-right: 100px;
-            background: #0e4bf1;
-            color: white; 
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;">Add Doctor <i class="fa-solid fa-user-plus" style="color: white; padding-left: 2px; font-size: 15px;"></i></a>    
+        <a href="{% url 'create_doctor' %}" class="add" >Add Doctor <i class="fa-solid fa-user-plus" style="color: white; padding-left: 2px; font-size: 15px;"></i></a>    
     </div>
 
     <div class="activity-data">
@@ -166,9 +156,9 @@
             </div>
             <div class="data address">
                 <a href="{% url 'update_doctor' doctor.pk %}" class="btn-edit">
-                    <i class="fa-solid fa-user-pen" style="background-color: rgb(0, 0, 0); color: white;padding: 5px;"></i></a>
+                    <i class="fa-solid fa-user-pen" ></i></a>
                 <a href="#" class="btn-delete" onclick="openModal('{{ doctor.pk }}', '{{ doctor.user.name }}')">
-                    <i class="fa-solid fa-user-xmark" style="background-color: red; color: white; padding: 5px;margin-left: 5px;"></i></a>            
+                    <i class="fa-solid fa-user-xmark"></i></a>            
             </div>
         </div>
         {% empty %}

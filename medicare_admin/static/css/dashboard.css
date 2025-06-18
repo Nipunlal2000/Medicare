@@ -330,11 +330,13 @@ nav.close ~ .dashboard .top{
     border-radius: 12px;
     width: calc(100% / 3 - 15px);
     padding: 15px 20px;
-    background-color: var(--box1-color);
+    background-color: #3498db70;
     transition: var(--tran-05);
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 .boxes .box i{
     font-size: 35px;
+    padding-top: 15px;
     color: var(--text-color);
 }
 .boxes .box .text{
@@ -349,10 +351,27 @@ nav.close ~ .dashboard .top{
     color: var(--text-color);
 }
 .boxes .box.box2{
-    background-color: var(--box2-color);
+    background-color: #f39d125f;
 }
 .boxes .box.box3{
-    background-color: var(--box3-color);
+    background-color: #2ecc7060;
+}
+
+.add{
+    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    height: 35px;
+    margin-right: 100px;
+    background: #0e4bf1;
+    color: white; 
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+
 }
 
 .activity-data {
@@ -429,6 +448,7 @@ nav.close ~ .dashboard .top{
     .dash-content .boxes .box{
         width: calc(100% / 2 - 15px);
         margin-top: 15px;
+        
     }
 }
 @media (max-width: 560px) {
@@ -518,6 +538,24 @@ nav.close ~ .dashboard .top{
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
 }
+
+.btn-edit{
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+        background-color: rgb(0, 0, 0); 
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+}
+.btn-delete{
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+        background-color: red; 
+        color: white; 
+        padding: 5px;
+        margin-left: 5px;
+        border-radius: 5px;
+
+}
+
 
 .pagination span {
     color: var(--dark-color);

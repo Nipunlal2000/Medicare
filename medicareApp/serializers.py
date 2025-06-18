@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from .models import *
+from datetime import date as today_date
+from django.db.models import Q
 import random
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -58,28 +60,32 @@ class UserProfileSerializer(serializers.ModelSerializer):
         exclude = ['password', 'user_permissions', 'groups']
 
 class DoctorListSerializer(serializers.ModelSerializer):
-    available_today = serializers.SerializerMethodField()
+    available_on_date = serializers.SerializerMethodField()
     name = serializers.CharField(source='user.name', read_only=True)
 
     class Meta:
         model = Doctors
-        fields = ['id', 'user','name', 'specialization', 'hospital','image', 'available_today']
+        fields = ['id', 'user','name', 'specialization', 'hospital','image', 'available_on_date']
 
-    def get_available_today(self, obj):
-        today = timezone.now().date()
-        return obj.availability.filter(start_date__lte=today).exists()
+    def get_available_on_date(self, obj):
+        date_str = self.context.get('selected_date')
+        if date_str:
+            try:
+                selected_date = timezone.datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                selected_date = timezone.now().date()
+        else:
+            selected_date = timezone.now().date()
+
+        return obj.availability.filter(start_date__lte=selected_date).filter(
+            Q(end_date__gte=selected_date) | Q(end_date__isnull=True)
+        ).exists()
+
 
 class DoctorAvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorAvailability
         fields = ['start_date', 'end_date', 'start_time', 'end_time', 'repeat_days']
-
-# class AppointmentSerializer(serializers.ModelSerializer):
-#     doctor_name = serializers.CharField(source='doctor.user.name', read_only=True)
-
-#     class Meta:
-#         model = Appointment
-#         fields = ['id', 'doctor_name', 'date', 'time']
 
 
 
